@@ -7,8 +7,9 @@ from selenium import webdriver
 def browser():
     with allure.step("Открыть и настроить браузер"):
         browser = webdriver.Chrome()
-        browser.implicity_wait(4)
+        browser.implicitly_wait(4)
         browser.maximize_window()
+        browser.get("https://www.chitai-gorod.ru")
         yield browser
 
     with allure.step("Закрыть браузер"):
