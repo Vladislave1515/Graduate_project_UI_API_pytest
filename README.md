@@ -7,6 +7,8 @@
 1. Склонировать проект 'git clone https://github.com/Vladislave1515/Graduate_project_UI_API_pytest.git'
 2. Установить зависимости
 3. Запустить тесты 'pytest'
+4. Сгенерировать отчет 'allure generate allure-files -o allure-report'
+5. Открыть отчет 'allure open allure-report'
 
 ### Стек:
 - pytest
