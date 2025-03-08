@@ -7,9 +7,7 @@ class SearchPage:
     def __init__(self, driver):
         self.driver = driver
         self.search_box = (By.CSS_SELECTOR, 'input.header-search__input')
-        self.search_button = (
-            By.CSS_SELECTOR, 'button.header-search__button'
-        )
+        self.search_button = (By.CSS_SELECTOR, 'button.header-search__button')
         self.category_books = (
             By.XPATH,
             '//span[contains(@class, "search-categories-tree-item__text") '
@@ -23,64 +21,64 @@ class SearchPage:
         )
         self.delete_query_cross = (
             By.XPATH, '//button[contains(@class, "result-item__button")]'
-        )
+         )
         self.clear_icon = (
             By.CLASS_NAME, 'header-search__clear-icon'
-        )
+            )
         self.suggestions_title = (
             By.CLASS_NAME, 'search-suggestion-wrapper__title'
-        )
+            )
+        self.book_author = (
+            By.CSS_SELECTOR, 'article:nth-child(1) .product-title__author'
+            )
 
     def enter_search_query(self, query):
-        wait = WebDriverWait(self.driver, 3)
-        search_input = wait.until(
+        search_input = WebDriverWait(self.driver, 3).until(
             EC.presence_of_element_located(self.search_box)
         )
         search_input.send_keys(query)
 
     def submit_search(self):
-        wait = WebDriverWait(self.driver, 3)
-        wait.until(
+        WebDriverWait(self.driver, 3).until(
             EC.element_to_be_clickable(self.search_button)
         ).click()
 
     def select_books_category(self):
-        wait = WebDriverWait(self.driver, 3)
-        wait.until(
+        WebDriverWait(self.driver, 3).until(
             EC.element_to_be_clickable(self.category_books)
         ).click()
 
     def wait_for_results(self):
-        wait = WebDriverWait(self.driver, 3)
-        wait.until(EC.presence_of_element_located(self.books_count))
-        books_count_element = self.driver.find_element(*self.books_count)
-        return int(books_count_element.text)
+        WebDriverWait(self.driver, 3).until(
+            EC.presence_of_element_located(self.books_count)
+        )
+        return self.driver.find_element(*self.books_count).text
 
     def delete_search_query_from_history(self):
-        wait = WebDriverWait(self.driver, 3)
-        delete_button = wait.until(
+        delete_button = WebDriverWait(self.driver, 3).until(
             EC.element_to_be_clickable(self.delete_query_cross)
         )
         delete_button.click()
-        wait.until(EC.staleness_of(delete_button))
+        WebDriverWait(self.driver, 3).until(EC.staleness_of(delete_button))
 
     def clear_search_box_with_icon(self):
-        wait = WebDriverWait(self.driver, 3)
-        clear_button = wait.until(
+        WebDriverWait(self.driver, 3).until(
             EC.element_to_be_clickable(self.clear_icon)
-        )
-        clear_button.click()
+        ).click()
 
     def click_on_search_box(self):
-        wait = WebDriverWait(self.driver, 3)
-        search_box = wait.until(
+        WebDriverWait(self.driver, 3).until(
             EC.element_to_be_clickable(self.search_box)
-        )
-        search_box.click()
+        ).click()
 
     def is_popular_suggestions_title_correct(self):
-        wait = WebDriverWait(self.driver, 3)
-        title_element = wait.until(
+        title_element = WebDriverWait(self.driver, 3).until(
             EC.presence_of_element_located(self.suggestions_title)
         )
         return title_element.text == "Популярные запросы"
+
+    def get_book_author(self):
+        author_element = WebDriverWait(self.driver, 3).until(
+            EC.presence_of_element_located(self.book_author)
+        )
+        return author_element.text

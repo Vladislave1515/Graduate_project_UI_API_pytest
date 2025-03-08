@@ -24,7 +24,7 @@ class TestSearch:
             search_page.select_books_category()
 
         with allure.step("Ожидание появления результатов поиска"):
-            results_count = search_page.wait_for_results()
+            results_count = int(search_page.wait_for_results())
 
         with allure.step("Проверка отображения результатов поиска"):
             assert results_count > 0, "Результаты поиска не найдены"
@@ -59,4 +59,35 @@ class TestSearchHistory:
         with allure.step("Проверка заголовка популярных запросов"):
             assert search_page.is_popular_suggestions_title_correct(), (
                 "Заголовок популярных запросов неверен или отсутствует"
+            )
+
+
+@allure.feature('Поиск')
+@allure.story('Поиск по автору')
+@allure.severity(allure.severity_level.CRITICAL)
+class TestSearchByAuthor:
+
+    @allure.title("Поиск по автору книги")
+    @allure.description(
+        "Проверка, что поиск по автору 'роулинг джоан кэтлин' выдаёт "
+        "корректные книги"
+    )
+    def test_search_by_author(self, browser):
+        search_page = SearchPage(browser)
+
+        with allure.step("Ввести имя автора в строку поиска"):
+            search_page.enter_search_query('роулинг джоан кэтлин')
+
+        with allure.step("Отправить запрос поиска"):
+            search_page.submit_search()
+
+        with allure.step("Ожидать загрузку результатов поиска"):
+            search_page.wait_for_results()  # Добавлен метод ожидания загрузки
+
+        with allure.step("Получить имя автора из первой карточки книги"):
+            first_book_author = search_page.get_book_author()
+
+        with allure.step("Проверить, что автор совпадает"):
+            assert 'роулинг' in first_book_author.lower(), (
+                f"Ожидался автор 'роулинг', но найден '{first_book_author}'"
             )
