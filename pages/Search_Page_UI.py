@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
 
 class SearchPage:
@@ -31,12 +32,33 @@ class SearchPage:
         self.book_author = (
             By.CSS_SELECTOR, 'article:nth-child(1) .product-title__author'
             )
+        self.empty_result_message = (
+            By.CSS_SELECTOR, 'div.catalog-empty-result__container > div > h4'
+        )
 
     def enter_search_query(self, query):
-        search_input = WebDriverWait(self.driver, 3).until(
-            EC.presence_of_element_located(self.search_box)
+        """
+        Вводит запрос в строку поиска. Использует JavaScript для добавления
+        сложных символов.
+        """
+        search_input = WebDriverWait(self.driver, 5).until(
+            EC.element_to_be_clickable(self.search_box)
         )
-        search_input.send_keys(query)
+        search_input.click()
+
+        js_add_text_to_input = """
+        var elm = arguments[0], txt = arguments[1];
+        elm.value += txt;
+        elm.dispatchEvent(new Event('change'));
+        """
+        self.driver.execute_script(js_add_text_to_input, search_input, query)
+
+        try:
+            search_input.send_keys(query)
+        except Exception:
+            self.driver.execute_script(
+                "arguments[0].value = arguments[1];", search_input, query
+            )
 
     def submit_search(self):
         WebDriverWait(self.driver, 3).until(
@@ -82,3 +104,39 @@ class SearchPage:
             EC.presence_of_element_located(self.book_author)
         )
         return author_element.text
+
+    def get_first_book_title(self):
+        book_title_locator = (
+            By.CSS_SELECTOR, 'article:nth-child(1) .product-title__head'
+            )
+        wait = WebDriverWait(self.driver, 3)
+        title_element = wait.until(
+            EC.presence_of_element_located(book_title_locator)
+            )
+        return title_element.text
+
+    def is_search_success(self):
+        """
+        Проверяет, завершен ли поиск и загрузились ли элементы результатов.
+        Возвращает True, если элемент найден, иначе False.
+        """
+        success_indicator = (
+            By.CSS_SELECTOR, 'div.search-page.js-catalog-container > p'
+            )
+        try:
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located(success_indicator)
+            )
+            return True
+        except TimeoutException:
+            return False
+
+    def get_empty_result_message(self):
+        """
+        Возвращает текст сообщения об отсутствии результатов,
+        если оно существует.
+        """
+        empty_message_element = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located(self.empty_result_message)
+        )
+        return empty_message_element.text
