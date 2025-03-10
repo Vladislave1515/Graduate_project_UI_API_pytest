@@ -1,0 +1,412 @@
+{
+    "new_values": [
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1776166228,
+            "httpOnly": false,
+            "name": "mindboxDeviceUUID",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "48e55094-bf84-4170-a369-dc67cb1bc03e"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1776166227,
+            "httpOnly": false,
+            "name": "adrdel",
+            "path": "/",
+            "sameSite": "None",
+            "secure": true,
+            "value": "1741606227481"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1741607486,
+            "httpOnly": false,
+            "name": "__ddg9_",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "91.239.227.44"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1746790227,
+            "httpOnly": false,
+            "name": "chg_visitor_id",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": true,
+            "value": "af77a377-2af9-4ea9-8573-357c39a62fda"
+        },
+        {
+            "domain": ".www.chitai-gorod.ru",
+            "expiry": 1776166283,
+            "httpOnly": false,
+            "name": "adrcid",
+            "path": "/",
+            "sameSite": "None",
+            "secure": true,
+            "value": "A4RHOvoS__SzAq505gn9LOw"
+        },
+        {
+            "domain": "www.chitai-gorod.ru",
+            "expiry": 1773142284,
+            "httpOnly": false,
+            "name": "_ymab_param",
+            "path": "/",
+            "sameSite": "None",
+            "secure": true,
+            "value": "0GYOSGmqUewO6NdH6psteWnfwU-_gJzaJ7q1puwUWIYRa-du_rocckF5B5zeodffG_uyu7NV7KuFatS7i22hH1nkRks"
+        },
+        {
+            "domain": "www.chitai-gorod.ru",
+            "expiry": 1741608089,
+            "httpOnly": false,
+            "name": "_pk_ses.1.f5fe",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "1"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1757158227,
+            "httpOnly": false,
+            "name": "gdeslon.ru.user_id",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "06a11512-2cc2-4419-a814-e53c73dd09c9"
+        },
+        {
+            "domain": ".www.chitai-gorod.ru",
+            "expiry": 1776166227,
+            "httpOnly": false,
+            "name": "adrdel",
+            "path": "/",
+            "sameSite": "None",
+            "secure": true,
+            "value": "1741606227481"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1776166289,
+            "httpOnly": false,
+            "name": "_ga_LN4Z31QGF4",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "GS1.1.1741606227.1.1.1741606289.60.0.219189571"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1776166227,
+            "httpOnly": false,
+            "name": "acs_3",
+            "path": "/",
+            "sameSite": "None",
+            "secure": true,
+            "value": "%7B%22hash%22%3A%22be483547539f1e5fb43aa6ae1ea56ef0a5c5be24%22%2C%22nst%22%3A1741692627486%2C%22sl%22%3A%7B%22224%22%3A1741606227486%2C%221228%22%3A1741606227486%7D%7D"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1741678226,
+            "httpOnly": false,
+            "name": "_ym_isad",
+            "path": "/",
+            "sameSite": "None",
+            "secure": true,
+            "value": "2"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1773142226,
+            "httpOnly": false,
+            "name": "_ym_uid",
+            "path": "/",
+            "sameSite": "None",
+            "secure": true,
+            "value": "1741606227289802374"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "httpOnly": false,
+            "name": "tid-state",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "80b60d40-5fcc-4c70-b9b2-6de73f2f318e"
+        },
+        {
+            "domain": "www.chitai-gorod.ru",
+            "expiry": 1773142228,
+            "httpOnly": false,
+            "name": "adid",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "174160622887446"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1776166226,
+            "httpOnly": false,
+            "name": "stDeIdU",
+            "path": "/",
+            "sameSite": "None",
+            "secure": true,
+            "value": "b231eb395a44db8669a33096e2e0f62d"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1776166284,
+            "httpOnly": false,
+            "name": "_ga",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "GA1.1.774357769.1741606227"
+        },
+        {
+            "domain": ".www.chitai-gorod.ru",
+            "expiry": 1776166227,
+            "httpOnly": false,
+            "name": "acs_3",
+            "path": "/",
+            "sameSite": "None",
+            "secure": true,
+            "value": "%7B%22hash%22%3A%22be483547539f1e5fb43aa6ae1ea56ef0a5c5be24%22%2C%22nst%22%3A1741692627486%2C%22sl%22%3A%7B%22224%22%3A1741606227486%2C%221228%22%3A1741606227486%7D%7D"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1757158284,
+            "httpOnly": false,
+            "name": "popmechanic_sbjs_migrations",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "popmechanic_1418474375998%3D1%7C%7C%7C1471519752600%3D1%7C%7C%7C1471519752605%3D1"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1770377483,
+            "httpOnly": false,
+            "name": "tmr_lvidTS",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "1741606227051"
+        },
+        {
+            "domain": "www.chitai-gorod.ru",
+            "expiry": 1742211028,
+            "httpOnly": false,
+            "name": "domain_sid",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "z9Jb9tnlN6cU3VIdpmyxd%3A1741606228308"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1776166226,
+            "httpOnly": false,
+            "name": "vIdUid",
+            "path": "/",
+            "sameSite": "None",
+            "secure": true,
+            "value": "01957fd2-0a9c-7508-bb84-f5245a3dc099"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1776166283,
+            "httpOnly": false,
+            "name": "_ga_W0V3RXZCPY",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "GS1.1.1741606226.1.1.1741606283.0.0.0"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1773142225,
+            "httpOnly": false,
+            "name": "refresh-token",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": ""
+        },
+        {
+            "domain": "www.chitai-gorod.ru",
+            "expiry": 1741692686,
+            "httpOnly": false,
+            "name": "tmr_detect",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "0%7C1741606286701"
+        },
+        {
+            "domain": "www.chitai-gorod.ru",
+            "expiry": 1775561427,
+            "httpOnly": false,
+            "name": "_pk_id.1.f5fe",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "32e00a45201be538.1741606227."
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1770377483,
+            "httpOnly": false,
+            "name": "tmr_lvid",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "6dac51053e796b704f2d50a474960d15"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1776166226,
+            "httpOnly": false,
+            "name": "__P__wuid",
+            "path": "/",
+            "sameSite": "None",
+            "secure": true,
+            "value": "b231eb395a44db8669a33096e2e0f62d"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1776166283,
+            "httpOnly": false,
+            "name": "adrcid",
+            "path": "/",
+            "sameSite": "None",
+            "secure": true,
+            "value": "A4RHOvoS__SzAq505gn9LOw"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1776166284,
+            "httpOnly": false,
+            "name": "stLaEvTi",
+            "path": "/",
+            "sameSite": "None",
+            "secure": true,
+            "value": "1741606284141"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1776166284,
+            "httpOnly": false,
+            "name": "_ga_6JJPBGS8QY",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "GS1.1.1741606227.1.1.1741606284.0.0.0"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1741607486,
+            "httpOnly": false,
+            "name": "__ddg8_",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "U8AwJmvpNXntPmIT"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1773142224,
+            "httpOnly": true,
+            "name": "__ddg1_",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "YvGRI4qaNwtA47ieTZ99"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1773142226,
+            "httpOnly": false,
+            "name": "_ym_d",
+            "path": "/",
+            "sameSite": "None",
+            "secure": true,
+            "value": "1741606227"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1741607486,
+            "httpOnly": false,
+            "name": "__ddg10_",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "1741606286"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1773142225,
+            "httpOnly": false,
+            "name": "access-token",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "Bearer%20eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDE3NzQyMjUsImlhdCI6MTc0MTYwNjIyNSwiaXNzIjoiL2FwaS92MS9hdXRoL2Fub255bW91cyIsInN1YiI6Ijc5MzAzZDI1OTA1YmViNmQ3ZDdmYzk3YzdhNThhYmE2MTgyNmQ2Y2UwNjk0MzMzZWJkOTk2MWNhYWMxY2FmN2MiLCJ0eXBlIjoxMH0.IWMBHqNR5_aWF3r9sm1zd3K9yAIsvC9pcSAUcDX8GlA"
+        },
+        {
+            "domain": "www.chitai-gorod.ru",
+            "expiry": 1770377428,
+            "httpOnly": false,
+            "name": "flocktory-uuid",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "720f2fd7-7e3c-49ea-801b-bf0c68665569-5"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1776166228,
+            "httpOnly": false,
+            "name": "directCrm-session",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "%7B%22deviceGuid%22%3A%2248e55094-bf84-4170-a369-dc67cb1bc03e%22%7D"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1776166226,
+            "httpOnly": false,
+            "name": "stSeStTi",
+            "path": "/",
+            "sameSite": "None",
+            "secure": true,
+            "value": "1741606226588"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "expiry": 1757158227,
+            "httpOnly": false,
+            "name": "gdeslon.ru.__arc_domain",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "gdeslon.ru"
+        },
+        {
+            "domain": ".chitai-gorod.ru",
+            "httpOnly": false,
+            "name": "_ymab_param",
+            "path": "/",
+            "sameSite": "Lax",
+            "secure": false,
+            "value": "0GYOSGmqUewO6NdH6psteWnfwU-_gJzaJ7q1puwUWIYRa-du_rocckF5B5zeodffG_uyu7NV7KuFatS7i22hH1nkRks"
+        }
+    ]
+}
