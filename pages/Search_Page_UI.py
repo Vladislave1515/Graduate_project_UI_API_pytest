@@ -145,7 +145,7 @@ class SearchPage:
         try:
             wait_for_element(
                 self.driver, success_indicator, EC.presence_of_element_located,
-                timeout=10
+                timeout=3
             )
             return True
         except TimeoutException:
@@ -154,7 +154,7 @@ class SearchPage:
     def get_empty_result_message(self):
         empty_message_element = wait_for_element(
             self.driver, self.empty_result_message,
-            EC.presence_of_element_located, timeout=10
+            EC.presence_of_element_located, timeout=3
         )
         return empty_message_element.text
 
@@ -166,7 +166,7 @@ class SearchPage:
         try:
             history_element = wait_for_element(
                 self.driver, self.search_history_item,
-                EC.presence_of_element_located, timeout=5
+                EC.presence_of_element_located, timeout=3
             )
             return history_element.text
         except TimeoutException:
