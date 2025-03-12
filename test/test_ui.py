@@ -5,42 +5,42 @@ from pages.Cart_Page_UI import CartPage
 import time
 
 
-@allure.feature('Поиск')
-@allure.story('Валидный запрос')
-@allure.severity(allure.severity_level.NORMAL)
-@allure.title("Поиск с валидным запросом")
-@allure.description(
-    "Тестирование функции поиска с использованием валидного запроса "
-    "'Гарри Поттер и кубок огня'"
-)
-@pytest.mark.ui
-def test_valid_search(browser):
-    search_page = SearchPage(browser)
-    with allure.step("Ввести и отправить запрос в строку поиска"):
-        search_page.enter_search_query_with_keys("Гарри Поттер и кубок огня")
-        search_page.submit_search()
-    with allure.step("Проверить успешность выполнения поиска"):
-        assert search_page.is_search_success(), (
-            "Поиск не выполнен: результаты не загрузились."
-        )
-    with allure.step("Выбрать категорию 'Книги'"):
-        search_page.select_books_category()
-    with allure.step("Проверить количество найденных результатов"):
-        results_count = search_page.wait_for_results()
-        assert int(results_count) > 0, "Результаты поиска отсутствуют!"
+class TestSearch:
+    @allure.feature('Поиск')
+    @allure.story('Валидный запрос')
+    @allure.severity(allure.severity_level.NORMAL)
+    @allure.title("Поиск с валидным запросом")
+    @allure.description(
+        "Тестирование функции поиска с использованием валидного запроса "
+        "'Гарри Поттер и кубок огня'"
+    )
+    @pytest.mark.ui
+    def test_valid_search(self, browser):
+        search_page = SearchPage(browser)
+        with allure.step("Ввести и отправить запрос в строку поиска"):
+            search_page.enter_search_query_with_keys(
+                "Гарри Поттер и кубок огня"
+                )
+            search_page.submit_search()
+        with allure.step("Проверить успешность выполнения поиска"):
+            assert search_page.is_search_success(), (
+                "Поиск не выполнен: результаты не загрузились."
+            )
+        with allure.step("Выбрать категорию 'Книги'"):
+            search_page.select_books_category()
+        with allure.step("Проверить количество найденных результатов"):
+            results_count = search_page.wait_for_results()
+            assert int(results_count) > 0, "Результаты поиска отсутствуют!"
 
-
-@allure.feature('Поиск')
-@allure.story('Удаление запроса из истории поиска')
-@allure.severity(allure.severity_level.CRITICAL)
-@pytest.mark.ui
-class TestSearchHistory:
-
+    @allure.feature('Поиск')
+    @allure.story('Удаление запроса из истории поиска')
+    @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("Удаление запроса из истории поиска")
     @allure.description(
-        "Тестирование удаления запроса 'Книга Гарри Поттер и кубок огня' "
-        "из истории поиска"
-    )
+            "Тестирование удаления запроса 'Книга Гарри Поттер и кубок огня' "
+            "из истории поиска"
+        )
+    @pytest.mark.ui
     def test_search_delete_query(self, browser):
         search_page = SearchPage(browser)
         with allure.step("Ввести и отправить запрос в строку поиска"):
@@ -59,258 +59,327 @@ class TestSearchHistory:
                 "Заголовок популярных запросов неверен или отсутствует"
             )
 
+    @allure.feature('Поиск')
+    @allure.story('Поиск по автору')
+    @allure.severity(allure.severity_level.NORMAL)
+    @allure.title("Поиск книг по автору")
+    @allure.description(
+        "Тестирование функции поиска книг по автору "
+        "'роулинг джоан кэтлин'"
+    )
+    @pytest.mark.ui
+    def test_search_by_author(self, browser):
+        search_page = SearchPage(browser)
+        with allure.step("Ввести и отправить запрос в строку поиска"):
+            search_page.enter_search_query_with_keys("роулинг джоан кэтлин")
+            search_page.submit_search()
+        with allure.step("Проверить успешность выполнения поиска"):
+            assert search_page.is_search_success(), (
+                "Поиск не выполнен: результаты не загрузились."
+            )
+        with allure.step("Проверить автора первой книги в результатах поиска"):
+            author = search_page.get_book_author()
+            assert "роулинг" in author.lower(), (
+                f"Ожидалось имя автора 'роулинг', но найдено '{author}'."
+            )
 
-@allure.feature('Поиск')
-@allure.story('Поиск по автору')
-@allure.severity(allure.severity_level.NORMAL)
-@allure.title("Поиск книг по автору")
-@allure.description(
-    "Тестирование функции поиска книг по автору "
-    "'роулинг джоан кэтлин'"
-)
-@pytest.mark.ui
-def test_search_by_author(browser):
-    search_page = SearchPage(browser)
-    with allure.step("Ввести и отправить запрос в строку поиска"):
-        search_page.enter_search_query_with_keys("роулинг джоан кэтлин")
-        search_page.submit_search()
-    with allure.step("Проверить успешность выполнения поиска"):
-        assert search_page.is_search_success(), (
-            "Поиск не выполнен: результаты не загрузились."
-        )
-    with allure.step("Проверить автора первой книги в результатах поиска"):
-        author = search_page.get_book_author()
-        assert "роулинг" in author.lower(), (
-            f"Ожидалось имя автора 'роулинг', но найдено '{author}'."
-        )
+    @allure.feature('Поиск')
+    @allure.story('Неправильная раскладка клавиатуры')
+    @allure.severity(allure.severity_level.NORMAL)
+    @allure.title("Поиск с неправильной раскладкой")
+    @allure.description(
+        "Тестирование обработки запроса, введенного с неправильной раскладкой "
+        "клавиатуры ('ufhbb gjnnth')"
+    )
+    @pytest.mark.ui
+    def test_search_wrong_keyboard_layout(self, browser):
+        search_page = SearchPage(browser)
+        with allure.step("Ввести и отправить запрос в строку поиска"):
+            search_page.enter_search_query_with_keys("ufhbb gjnnth")
+            search_page.submit_search()
+        with allure.step("Проверить успешность выполнения поиска"):
+            assert search_page.is_search_success(), (
+                "Поиск не выполнен: результаты не загрузились."
+            )
+        with allure.step("Проверить название первой книги в результатах"):
+            first_book_title = search_page.get_first_book_title()
+            assert 'гарри поттер' in first_book_title.lower(), (
+                "Ожидалось название 'гарри поттер', но найдено '\n"
+                f"{first_book_title}'"
+            )
 
+    @allure.feature('Поиск')
+    @allure.story('Негативный тест: Валидное название товара со спецсимволами')
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Поиск с валидным названием и специальными символами")
+    @allure.description(
+        "Тестирование обработки системы при поиске запроса"
+        " с валидным названием товара и набором специальных символов."
+        "Проверяется, что система выдаёт релевантные результаты."
+    )
+    @pytest.mark.ui
+    def test_search_with_special_char(self, browser):
+        search_page = SearchPage(browser)
+        with allure.step("Ввести запрос с валидным названием и спецсимволами"):
+            query = "Гарри Поттер ()_+{}|:”>?<Ё!”№;:?*()_+/Ъ,/.,;’[]^$&*"
+            search_page.enter_search_query_with_keys(query)
+        with allure.step("Отправить запрос"):
+            search_page.submit_search()
+        with allure.step("Проверить успешность выполнения поиска"):
+            assert search_page.is_search_success(), (
+                "Поиск не выполнен: результаты не загрузились."
+            )
+        with allure.step("Проверить название первой книги в результатах"):
+            first_book_title = search_page.get_first_book_title()
+            assert 'гарри поттер' in first_book_title.lower(), (
+                "Ожидалось название 'гарри поттер' в результатах поиска, \n"
+                f"но найдено: '{first_book_title}'."
+            )
 
-@allure.feature('Поиск')
-@allure.story('Неправильная раскладка клавиатуры')
-@allure.severity(allure.severity_level.NORMAL)
-@allure.title("Поиск с неправильной раскладкой")
-@allure.description(
-    "Тестирование обработки запроса, введенного с неправильной раскладкой "
-    "клавиатуры ('ufhbb gjnnth')"
-)
-@pytest.mark.ui
-def test_search_wrong_keyboard_layout(browser):
-    search_page = SearchPage(browser)
-    with allure.step("Ввести и отправить запрос в строку поиска"):
-        search_page.enter_search_query_with_keys("ufhbb gjnnth")
-        search_page.submit_search()
-    with allure.step("Проверить успешность выполнения поиска"):
-        assert search_page.is_search_success(), (
-            "Поиск не выполнен: результаты не загрузились."
-        )
-    with allure.step("Проверить название первой книги в результатах поиска"):
-        first_book_title = search_page.get_first_book_title()
-        assert 'гарри поттер' in first_book_title.lower(), (
-            "Ожидалось название 'гарри поттер', но найдено '\n"
-            f"{first_book_title}'"
-        )
+    @allure.feature('Поиск')
+    @allure.story('Поиск с использованием только эмодзи')
+    @allure.severity(allure.severity_level.NORMAL)
+    @allure.title("Поиск только с использованием эмодзи")
+    @allure.description(
+        "Тестирование поиска с использованием только эмодзи. "
+        "Ожидается, что система ничего не найдет и выдаст сообщение "
+        "'Похоже, у нас такого нет'."
+    )
+    @pytest.mark.ui
+    def test_search_with_emojis(self, browser):
+        search_page = SearchPage(browser)
 
+        with allure.step("Ввести эмодзи в строку поиска через JavaScript"):
+            emoji_query = "\U0001F600\U0001F600\U0001F600\U0001F600"
+            search_page.enter_search_query_with_js(emoji_query)
 
-@allure.feature('Поиск')
-@allure.story('Негативный тест: Валидное название товара со спецсимволами')
-@allure.severity(allure.severity_level.CRITICAL)
-@allure.title("Поиск с валидным названием и специальными символами")
-@allure.description(
-    "Тестирование обработки системы при поиске запроса с валидным названием "
-    "товара и набором специальных символов. Проверяется, что система выдаёт "
-    "релевантные результаты."
-)
-@pytest.mark.ui
-def test_search_with_special_char(browser):
-    search_page = SearchPage(browser)
-    with allure.step("Ввести запрос с валидным названием и спецсимволами"):
-        query = "Гарри Поттер ()_+{}|:”>?<Ё!”№;:?*()_+/Ъ,/.,;’[]^$&*"
-        search_page.enter_search_query_with_keys(query)
-    with allure.step("Отправить запрос"):
-        search_page.submit_search()
-    with allure.step("Проверить успешность выполнения поиска"):
-        assert search_page.is_search_success(), (
-            "Поиск не выполнен: результаты не загрузились."
-        )
-    with allure.step("Проверить название первой книги в результатах поиска"):
-        first_book_title = search_page.get_first_book_title()
-        assert 'гарри поттер' in first_book_title.lower(), (
-            "Ожидалось название 'гарри поттер' в результатах поиска, \n"
-            f"но найдено: '{first_book_title}'."
-        )
+        with allure.step("Отправить запрос"):
+            search_page.submit_search()
 
+        with allure.step("Проверить сообщение об отсутствии результатов"):
+            empty_message = search_page.get_empty_result_message()
+            assert empty_message == "Похоже, у нас такого нет", (
+                f"Ожидалось сообщение 'Похоже, у нас такого нет', "
+                f"но получено: '{empty_message}'."
+            )
 
-@allure.feature('Поиск')
-@allure.story('Поиск с использованием только эмодзи')
-@allure.severity(allure.severity_level.NORMAL)
-@allure.title("Поиск только с использованием эмодзи")
-@allure.description(
-    "Тестирование поиска с использованием только эмодзи. "
-    "Ожидается, что система ничего не найдет и выдаст сообщение "
-    "'Похоже, у нас такого нет'."
-)
-@pytest.mark.ui
-def test_search_with_emojis(browser):
-    search_page = SearchPage(browser)
+    @allure.feature('Поиск')
+    @allure.story('Ввод более 150 символов')
+    @allure.severity(allure.severity_level.NORMAL)
+    @allure.title(
+        "Проверка ограничения на длину ввода в строке поиска после отправки")
+    @allure.description(
+        "Тестирование функции строки поиска при вводе более 150 символов. "
+        "Ожидается, что система обрежет запрос до 150 символов, при поиске."
+    )
+    @pytest.mark.ui
+    def test_search_input_150_char(self, browser):
+        search_page = SearchPage(browser)
 
-    with allure.step("Ввести эмодзи в строку поиска через JavaScript"):
-        emoji_query = "\U0001F600\U0001F600\U0001F600\U0001F600"
-        search_page.enter_search_query_with_js(emoji_query)
+        with allure.step("Ввести строку длиной более 150 символов вручную"):
+            long_query = "a" * 200  # Создаём строку из 200 символов
+            search_page.enter_search_query_with_keys(long_query)
 
-    with allure.step("Отправить запрос"):
-        search_page.submit_search()
+        with allure.step("Нажать кнопку поиска"):
+            search_page.submit_search()
 
-    with allure.step("Проверить сообщение об отсутствии результатов"):
-        empty_message = search_page.get_empty_result_message()
-        assert empty_message == "Похоже, у нас такого нет", (
-            f"Ожидалось сообщение 'Похоже, у нас такого нет', "
-            f"но получено: '{empty_message}'."
-        )
+        with allure.step("Кликнуть на строку поиска для активации истории"):
+            search_page.click_on_search_box()
 
+        with allure.step("Получить текст из истории поиска"):
+            history_text = search_page.get_search_history_text()
 
-@allure.feature('Поиск')
-@allure.story('Ввод более 150 символов')
-@allure.severity(allure.severity_level.NORMAL)
-@allure.title(
-    "Проверка ограничения на длину ввода в строке поиска после отправки")
-@allure.description(
-    "Тестирование функции строки поиска при вводе более 150 символов. "
-    "Ожидается, что система обрежет запрос до 150 символов, при поиске."
-)
-@pytest.mark.ui
-def test_search_input_150_char(browser):
-    search_page = SearchPage(browser)
+        with allure.step("Проверить, что длина строки из истории \n"
+                         "поиска не превышает 150 символов"):
+            assert len(history_text) <= 150, (
+                f"Превышено ограничение: {len(history_text)} символов"
+            )
 
-    with allure.step("Ввести строку длиной более 150 символов вручную"):
-        long_query = "a" * 200  # Создаём строку из 200 символов
-        search_page.enter_search_query_with_keys(long_query)
+    @allure.feature('Поиск')
+    @allure.story('Пустой запрос')
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Поиск с пустым запросом")
+    @allure.description(
+        "Тестирование поведения системы при поиске с пустым запросом. "
+        "Ожидается, что поиск не выполнится, поле поиска станет неактивным, "
+        "а локатор для проверки результатов не найдётся."
+    )
+    @pytest.mark.ui
+    def test_empty_search_query(self, browser):
+        search_page = SearchPage(browser)
 
-    with allure.step("Нажать кнопку поиска"):
-        search_page.submit_search()
+        with allure.step("Очистить строку поиска и выполнить поиск"):
+            search_page.enter_search_query_with_keys("")
+            search_page.submit_search()
 
-    with allure.step("Кликнуть на строку поиска для активации истории"):
-        search_page.click_on_search_box()
+        with allure.step("Проверить, что строка поиска становится неактивной"):
+            search_box_state = search_page.is_search_box_active()
+            assert not search_box_state, "Строка поиска остаётся \n"
+            "активной после выполнения пустого запроса!"
 
-    with allure.step("Получить текст из истории поиска"):
-        history_text = search_page.get_search_history_text()
+        with allure.step("Проверить, что поиск не выполнился"):
+            search_success = search_page.is_search_success()
+            assert not search_success, "Поиск выполнен, хотя запрос был пуст!"
 
-    with allure.step("Проверить, что длина строки из истории \n"
-                     "поиска не превышает 150 символов"):
-        assert len(history_text) <= 150, (
-            f"Превышено ограничение: {len(history_text)} символов"
-        )
+    @allure.feature('Поиск')
+    @allure.story('Невалидный запрос')
+    @allure.severity(allure.severity_level.NORMAL)
+    @allure.title("Поиск с невалидным запросом")
+    @allure.description(
+        "Тестирование поиска с использованием невалидного запроса. "
+        "Ожидается, что система не найдёт ничего и покажет сообщение "
+        "'Похоже, у нас такого нет'."
+    )
+    @pytest.mark.ui
+    def test_invalid_search(self, browser):
+        search_page = SearchPage(browser)
 
+        with allure.step("Ввести невалидный запрос в строку поиска"):
+            invalid_query = "aslkdjaslkdjaslkdja"  # Пример невалидного запроса
+            search_page.enter_search_query_with_keys(invalid_query)
 
-@allure.feature('Поиск')
-@allure.story('Пустой запрос')
-@allure.severity(allure.severity_level.CRITICAL)
-@allure.title("Поиск с пустым запросом")
-@allure.description(
-    "Тестирование поведения системы при поиске с пустым запросом. "
-    "Ожидается, что поиск не выполнится, поле поиска станет неактивным, "
-    "а локатор для проверки результатов не найдётся."
-)
-@pytest.mark.ui
-def test_empty_search_query(browser):
-    search_page = SearchPage(browser)
+        with allure.step("Отправить запрос"):
+            search_page.submit_search()
 
-    with allure.step("Очистить строку поиска и попытаться выполнить поиск"):
-        search_page.enter_search_query_with_keys("")
-        search_page.submit_search()
-
-    with allure.step("Проверить, что строка поиска становится неактивной"):
-        search_box_state = search_page.is_search_box_active()
-        assert not search_box_state, "Строка поиска остаётся активной после \n"
-        "выполнения пустого запроса!"
-
-    with allure.step("Проверить, что поиск не выполнился"):
-        search_success = search_page.is_search_success()
-        assert not search_success, "Поиск выполнен, хотя запрос был пустым!"
-
-
-@allure.feature('Поиск')
-@allure.story('Невалидный запрос')
-@allure.severity(allure.severity_level.NORMAL)
-@allure.title("Поиск с невалидным запросом")
-@allure.description(
-    "Тестирование поиска с использованием невалидного запроса. "
-    "Ожидается, что система не найдёт ничего и покажет сообщение "
-    "'Похоже, у нас такого нет'."
-)
-@pytest.mark.ui
-def test_invalid_search(browser):
-    search_page = SearchPage(browser)
-
-    with allure.step("Ввести невалидный запрос в строку поиска"):
-        invalid_query = "aslkdjaslkdjaslkdja"  # Пример невалидного запроса
-        search_page.enter_search_query_with_keys(invalid_query)
-
-    with allure.step("Отправить запрос"):
-        search_page.submit_search()
-
-    with allure.step("Проверить сообщение об отсутствии результатов"):
-        empty_message = search_page.get_empty_result_message()
-        assert empty_message == "Похоже, у нас такого нет", (
-            f"Ожидалось сообщение 'Похоже, у нас такого нет', "
-            f"но получено: '{empty_message}'."
-        )
+        with allure.step("Проверить сообщение об отсутствии результатов"):
+            empty_message = search_page.get_empty_result_message()
+            assert empty_message == "Похоже, у нас такого нет", (
+                f"Ожидалось сообщение 'Похоже, у нас такого нет', "
+                f"но получено: '{empty_message}'."
+            )
 
 
-@allure.feature('Корзина')
-@allure.story('Добавление товара')
-@allure.severity(allure.severity_level.CRITICAL)
-@allure.title("Добавление товара в корзину через кнопку 'КУПИТЬ'")
-@allure.description(
-    "Тестирование функциональности добавления товара"
-    "в корзину через кнопку 'КУПИТЬ'. "
-    "Ожидается, что товар будет добавлен в корзину."
-)
-@pytest.mark.ui
-def test_add_to_cart(browser):
-    search_page = SearchPage(browser)
-    cart_page = CartPage(browser)
+class TestCart:
+    @allure.feature('Корзина')
+    @allure.story('Добавление товара')
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Добавление товара в корзину через кнопку 'КУПИТЬ'")
+    @allure.description(
+        "Тестирование функциональности добавления товара"
+        "в корзину через кнопку 'КУПИТЬ'. "
+        "Ожидается, что товар будет добавлен в корзину."
+    )
+    @pytest.mark.ui
+    def test_add_to_cart(self, browser):
+        search_page = SearchPage(browser)
+        cart_page = CartPage(browser)
 
-    with allure.step("Выполнить валидный поисковой запрос 'Гарри Поттер'"):
-        search_page.enter_search_query_with_keys("Гарри Поттер")
-        search_page.submit_search()
+        with allure.step("Выполнить валидный поисковой запрос 'Гарри Поттер'"):
+            search_page.enter_search_query_with_keys("Гарри Поттер")
+            search_page.submit_search()
 
-    with allure.step("Нажать кнопку 'КУПИТЬ' для добавления товара в корзину"):
-        cart_page.click_buy_button()
+        with allure.step("Нажать кнопку 'КУПИТЬ' для добавления \n"
+                         "товара в корзину"):
+            cart_page.click_buy_button()
 
-    with allure.step("Проверить, что товар добавлен в корзину"):
-        cart_count = cart_page.get_cart_item_count()
-        assert cart_count > 0, "Товар не был добавлен в корзину!"
+        with allure.step("Проверить, что товар добавлен в корзину"):
+            cart_count = cart_page.get_cart_item_count()
+            assert cart_count > 0, "Товар не был добавлен в корзину!"
 
+    @allure.feature('Корзина')
+    @allure.story('Удаление товара')
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Удаление товара из корзины")
+    @allure.description(
+        "Тестирование удаления товара из корзины."
+        "Ожидается, что после нажатия кнопки удаления товар будет удалён,"
+        " и появится сообщение об удалении."
+    )
+    @pytest.mark.ui
+    def test_remove_item_from_cart(self, browser):
+        search_page = SearchPage(browser)
+        cart_page = CartPage(browser)
 
-@allure.feature('Корзина')
-@allure.story('Удаление товара')
-@allure.severity(allure.severity_level.CRITICAL)
-@allure.title("Удаление товара из корзины")
-@allure.description(
-    "Тестирование удаления товара из корзины. Ожидается, что после нажатия "
-    "кнопки удаления товар будет удалён, и появится сообщение об удалении."
-)
-@pytest.mark.ui
-def test_remove_item_from_cart(browser):
-    search_page = SearchPage(browser)
-    cart_page = CartPage(browser)
+        with allure.step("Добавить товар в корзину"):
+            search_page.enter_search_query_with_keys("гарри поттер")
+            search_page.submit_search()
+            cart_page.click_buy_button()
 
-    with allure.step("Добавить товар в корзину"):
-        search_page.enter_search_query_with_keys("гарри поттер")
-        search_page.submit_search()
-        cart_page.click_buy_button()
+        with allure.step("Перейти в корзину"):
+            cart_page.open_cart()
 
-    with allure.step("Перейти в корзину"):
-        cart_page.open_cart()
+        with allure.step("Удалить товар из корзины"):
+            cart_page.remove_item_from_cart()
 
-    with allure.step("Удалить товар из корзины"):
-        cart_page.remove_item_from_cart()
-        time.sleep(5)
+        with allure.step("Проверить, что товар удалён из корзины"):
+            notification_text = cart_page.get_notification_message()
+            print(f"Полученное сообщение: '{notification_text}'")
+            assert notification_text.strip() == "Удалили товар из корзины.", (
+                f"Ожидалось сообщение 'Удалили товар из корзины.', "
+                f"но получено: '{notification_text.strip()}'."
+            )
 
-    with allure.step("Проверить, что товар удалён из корзины"):
-        notification_text = cart_page.get_notification_message()
-        print(f"Полученное сообщение: '{notification_text}'")  # Для отладки
-        assert notification_text.strip() == "Удалили товар из корзины.", (
-            f"Ожидалось сообщение 'Удалили товар из корзины.', "
-            f"но получено: '{notification_text.strip()}'."
-        )
+    @allure.feature('Корзина')
+    @allure.story('Возврат удалённого товара в корзину')
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Возврат удалённого товара через кнопку 'ВЕРНУТЬ В КОРЗИНУ'")
+    @allure.description(
+        "Тестирование функциональности возврата удалённого товара"
+        " в корзину через кнопку 'ВЕРНУТЬ В КОРЗИНУ'. "
+        "Ожидается, что товар будет возвращён в корзину."
+    )
+    @pytest.mark.ui
+    def test_return_to_cart(self, browser):
+        search_page = SearchPage(browser)
+        cart_page = CartPage(browser)
+
+        with allure.step("Добавить товар в корзину"):
+            search_page.enter_search_query_with_keys("Гарри Поттер")
+            search_page.submit_search()
+            cart_page.click_buy_button()
+
+        with allure.step("Удалить товар из корзины"):
+            cart_page.open_cart()
+            cart_page.remove_item_from_cart()
+
+        with allure.step("Подождать обновления корзины после удаления товара"):
+            cart_page.cart_update()
+
+        with allure.step("Вернуть удалённый товар обратно в корзину"):
+            cart_page.click_return_to_cart_button()
+
+        with allure.step("Проверить, что товар снова добавлен в корзину"):
+            cart_count = cart_page.get_cart_item_count()
+            assert cart_count > 0, "Товар не был возвращён в корзину!"
+
+    @allure.feature('Корзина')
+    @allure.story('Изменение количества товара в корзине')
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Изменение количества товара в корзине через ручной ввод")
+    @allure.description(
+        "Тестирование изменения количества товара"
+        " в корзине через ручной ввод. "
+        "Ожидается, что количество товара и итоговая цена изменятся"
+        " в соответствии с вводимым числом."
+    )
+    @pytest.mark.ui
+    def test_change_item_quantity_in_cart(self, browser):
+        search_page = SearchPage(browser)
+        cart_page = CartPage(browser)
+
+        with allure.step("Добавить товар в корзину"):
+            search_page.enter_search_query_with_keys("Гарри Поттер")
+            search_page.submit_search()
+            cart_page.click_buy_button()
+
+        with allure.step("Перейти в корзину"):
+            cart_page.open_cart()
+            time.sleep(3)
+
+        with allure.step("Изменить количество товара в корзине на 3"):
+            cart_page.set_item_quantity(3)
+            time.sleep(3)
+
+        with allure.step("Проверить, что количество товара обновилось"):
+            quantity = cart_page.get_item_quantity()
+            assert quantity == 3, "Ожидалось количество 3,"
+            f" но получено {quantity}"
+            time.sleep(3)
+
+        with allure.step("Проверить, что итоговая цена обновилась"):
+            total_price = cart_page.get_total_price()
+            expected_price = cart_page.calculate_expected_price(quantity=3)
+            assert total_price == expected_price, (
+                f"Ожидалась итоговая цена {expected_price},"
+                f" но получено {total_price}"
+            )
