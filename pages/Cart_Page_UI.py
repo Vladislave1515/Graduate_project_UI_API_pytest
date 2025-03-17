@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from pages.Search_Page_UI import wait_for_element
 
 
-def wait_for_element_to_disappear(driver, locator, timeout=3):
+def wait_for_element_to_disappear(driver, locator, timeout=8):
     """
     Ждёт, пока указанный элемент исчезнет с DOM-дерева.
     """
@@ -22,23 +22,24 @@ class CartPage:
         self.driver = driver
         self.buy_button = (
             By.CSS_SELECTOR,
-            ".product-card__controls .button"
+            ".product-buttons__main-action.product-buttons__main-action > div"
         )
         self.cart_item_count = (
             By.CSS_SELECTOR,
-            ".sticky-header__controls .header-cart__badge"
+            ".sticky-header__controls > span > span."
+            "badge-notice.header-cart__badge"
         )
         self.cart_icon = (
             By.CSS_SELECTOR,
-            ".header-cart__icon.header-cart__icon--desktop"
+            ".header-controls.header__controls > button:nth-child(4)"
         )
         self.remove_button = (
             By.CSS_SELECTOR,
-            ".cart-item__actions-button--delete.light-blue"
+            ".cart-item__actions-button--delete.light-blue > svg"
         )
         self.notification_text = (
             By.CSS_SELECTOR,
-            ".item-removed__description-title"
+            ".item-removed__description > div.item-removed__description-title"
         )
         self.return_button = (
             By.CSS_SELECTOR,
@@ -46,16 +47,20 @@ class CartPage:
         )
         self.quantity_input = (
             By.CSS_SELECTOR,
-            ".cart-item__quantity-control > input"
+            ".product-quantity.cart-item__quantity-control > input"
         )  # Поле ввода количества
         self.total_price_locator = (
             By.CSS_SELECTOR,
-            ".product-price__value.product-price__value--discount"
+            ".product-price__value--discount"
         )  # Локатор для итоговой цены
         self.item_price_locator = (
             By.CSS_SELECTOR,
             ".cart-item__counter > div > div.cart-item__counter-unit"
         )  # Локатор для цены одного товара
+        self.quantity_plus_button = (
+            By.CSS_SELECTOR,
+            ".product-quantity__button.product-quantity__button--right"
+        )
 
         logging.info("CartPage инициализирован.")
 
@@ -88,7 +93,7 @@ class CartPage:
             logging.warning(
                 "Кнопка 'КУПИТЬ' перекрыта другим элементом."
             )
-            blocker_locator = (By.CSS_SELECTOR, "input.search.search-input")
+            blocker_locator = (By.CSS_SELECTOR, ".popmechanic-main")
             wait_for_element_to_disappear(self.driver, blocker_locator)
             logging.info("Блокирующий элемент исчез. Повторяем попытку.")
 
@@ -110,6 +115,9 @@ class CartPage:
             EC.element_to_be_clickable
         ).click()
         logging.info("Корзина успешно открыта.")
+
+        # Ожидание загрузки корзины
+        self.wait_for_cart_to_load()
 
     def remove_item_from_cart(self):
         """
@@ -151,12 +159,19 @@ class CartPage:
                 self.driver, self.cart_item_count,
                 EC.presence_of_element_located
             )
-            count = int(cart_count.text)
+            count = int(cart_count.text.strip())
             logging.info(f"Количество товаров в корзине: {count}.")
             return count
+        except ValueError:
+            logging.error(
+                f"Ошибка: значение '{cart_count.text}' не может быть \n"
+                "преобразовано."
+            )
+            return 0
         except exceptions.TimeoutException:
             logging.warning(
-                "Не удалось получить количество товаров в корзине.")
+                "Не удалось получить количество товаров в корзине."
+            )
             return 0
 
     def get_notification_message(self):
@@ -187,7 +202,7 @@ class CartPage:
                 f"Текущее количество товаров в корзине: {initial_count}")
 
             # Ждём, пока количество товаров уменьшится
-            WebDriverWait(self.driver, 2).until(
+            WebDriverWait(self.driver, 7).until(
                 lambda driver: self.get_cart_item_count() < initial_count,
                 "Корзина не обновилась: товар не был удалён."
             )
@@ -297,4 +312,69 @@ class CartPage:
         except exceptions.TimeoutException:
             logging.error(
                 "Не удалось получить итоговую цену: элемент недоступен.")
+            raise
+
+    def wait_price_update(self):
+        """
+        Ожидание обновления локатора цены одного
+          товара после изменения количества.
+        """
+        logging.info("Ожидание обновления цены одного товара.")
+        try:
+            WebDriverWait(self.driver, 8).until(
+                lambda driver: (
+                    element := self.
+                    driver.find_element(
+                        *self.item_price_locator
+                        )).is_displayed() and element.text.strip() != "",
+                "Цена товара не обновилась в течение заданного времени."
+            )
+            logging.info("Цена одного товара успешно обновлена.")
+        except exceptions.TimeoutException:
+            logging.error("Цена товара не обновилась в заданное время.")
+            raise
+
+    def wait_for_cart_to_load(self):
+        """
+        Ожидание загрузки корзины после перехода.
+        """
+        logging.info("Ожидание загрузки корзины.")
+        try:
+            WebDriverWait(self.driver, 7).until(
+                lambda driver: driver.find_element(
+                    *self.cart_item_count).is_displayed(),
+                "Корзина не загрузилась в течение заданного времени."
+            )
+            logging.info("Корзина успешно загружена.")
+        except exceptions.TimeoutException:
+            logging.error("Корзина не загрузилась.")
+            raise
+
+    def click_increase_quantity_button(self):
+        """
+        Увеличивает количество товара в корзине, нажимая на кнопку "+".
+        """
+        logging.info(
+            "Попытка нажать на кнопку '+' для увеличения количества товара."
+            )
+        try:
+            # Ожидание появления кнопки
+            quantity_plus = wait_for_element(
+                self.driver, self.quantity_plus_button,
+                EC.presence_of_element_located
+            )
+            # Клик через JavaScript
+            self.driver.execute_script("arguments[0].click();", quantity_plus)
+            logging.info("Кнопка '+' успешно нажата через JavaScript.")
+        except exceptions.TimeoutException:
+            logging.error("Кнопка '+' недоступна в течение заданного времени.")
+            raise
+        except exceptions.ElementClickInterceptedException as e:
+            logging.error(f"Ошибка: элемент перекрыт. Детали: {str(e)}")
+            raise
+        except Exception as e:
+            logging.error(
+                "Неизвестная ошибка при взаимодействии с кнопкой '+': \n"
+                f"{str(e)}"
+                )
             raise

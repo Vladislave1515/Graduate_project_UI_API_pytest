@@ -1,8 +1,8 @@
+import logging
 import allure
 import pytest
 from pages.Search_Page_UI import SearchPage
 from pages.Cart_Page_UI import CartPage
-import time
 
 
 class TestSearch:
@@ -364,17 +364,16 @@ class TestCart:
 
         with allure.step("Перейти в корзину"):
             cart_page.open_cart()
-            time.sleep(3)
 
         with allure.step("Изменить количество товара в корзине на 3"):
             cart_page.set_item_quantity(3)
-            time.sleep(3)
+        with allure.step("Подождать обновления цены товара"):
+            cart_page.wait_price_update()
 
         with allure.step("Проверить, что количество товара обновилось"):
             quantity = cart_page.get_item_quantity()
             assert quantity == 3, "Ожидалось количество 3,"
             f" но получено {quantity}"
-            time.sleep(3)
 
         with allure.step("Проверить, что итоговая цена обновилась"):
             total_price = cart_page.get_total_price()
@@ -382,4 +381,56 @@ class TestCart:
             assert total_price == expected_price, (
                 f"Ожидалась итоговая цена {expected_price},"
                 f" но получено {total_price}"
+            )
+
+    @allure.feature('Корзина')
+    @allure.story('Изменение количества товара в корзине')
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Изменение количества товара через кнопку '+'")
+    @allure.description(
+        "Тест проверяет, что после нажатия кнопки '+' количество товара "
+        "увеличивается, а итоговая цена пересчитывается корректно."
+    )
+    @pytest.mark.ui
+    def test_increase_item_quantity(self, browser):
+        search_page = SearchPage(browser)
+        cart_page = CartPage(browser)
+
+        with allure.step("Добавить товар в корзину"):
+            search_page.enter_search_query_with_keys("Гарри Поттер")
+            search_page.submit_search()
+            cart_page.click_buy_button()
+
+        with allure.step("Перейти в корзину"):
+            cart_page.open_cart()
+
+        with allure.step("Получить текущее количество и цену товара"):
+            initial_quantity = cart_page.get_cart_item_count()
+            initial_price = cart_page.get_total_price()
+            logging.info(
+                "Изначальное количество: "
+                f"{initial_quantity}, цена: {initial_price}."
+                )
+
+        with allure.step("Нажать на кнопку '+' для увеличения количества"):
+            cart_page.click_increase_quantity_button()
+
+        with allure.step("Подождать обновления количества и цены"):
+            cart_page.wait_price_update()
+
+        with allure.step("Проверить, что количество увеличилось на 1"):
+            updated_quantity = cart_page.get_item_quantity()
+            assert updated_quantity == initial_quantity + 1, (
+                "Ожидалось количество "
+                f"{initial_quantity + 1}, но получено {updated_quantity}."
+            )
+
+        with allure.step("Проверить, что итоговая цена изменилась корректно"):
+            updated_price = cart_page.get_total_price()
+            expected_price = cart_page.calculate_expected_price(
+                updated_quantity
+                )
+            assert updated_price == expected_price, (
+                "Ожидалась итоговая цена "
+                f"{expected_price}, но получено {updated_price}."
             )

@@ -12,7 +12,65 @@ logging.basicConfig(
 )
 
 
-def wait_for_element(driver, locator, condition, timeout=3):
+def handle_popups(driver):
+    """
+    Обрабатывает (ждет и закрывает) несколько всплывающих окон.
+    """
+    logging.info("Обработка всплывающих окон.")
+    popup_selectors = [
+        ".change-city-container > div",
+        ".popmechanic-main",
+        ".app-wrapper__content > div.cookie-notice",
+        ".app-wrapper__push-notification.push-notification--active > div",
+    ]
+    close_button_selectors = [
+        ".change-city__button--accept.blue",
+        ".popmechanic-close",
+        ".app-wrapper__content > div.cookie-notice > button",
+        ".button.button.push-notification__no-button.white",
+    ]
+
+    for popup_selector, close_button_selector in zip(
+        popup_selectors, close_button_selectors
+    ):
+        try:
+            # Ждать появления всплывающего окна
+            popup = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((
+                    By.CSS_SELECTOR, popup_selector))
+            )
+            logging.info(f"Всплывающее окно найдено: '{popup_selector}'.")
+
+            # Сделать всплывающее окно видимым, если оно скрыто
+            driver.execute_script(
+                "arguments[0].style.display = 'block';", popup
+                )
+
+            # Убедиться, что кнопка закрытия кликабельна
+            close_button = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((
+                    By.CSS_SELECTOR, close_button_selector))
+            )
+            logging.info(
+                f"Кнопка закрытия '{close_button_selector}' доступна."
+                )
+
+            # Нажать на кнопку закрытия
+            close_button.click()
+            logging.info(
+                f"Всплывающее окно '{popup_selector}' успешно закрыто."
+                )
+        except TimeoutException:
+            logging.warning(
+                f"Всплывающее окно '{popup_selector}' не появилось вовремя."
+                )
+        except Exception as e:
+            logging.error(
+                f"Ошибка при обработке окна '{popup_selector}': {str(e)}"
+                )
+
+
+def wait_for_element(driver, locator, condition, timeout=8):
     """
     Универсальный метод ожидания элемента.
 
@@ -30,40 +88,40 @@ class SearchPage:
         self.driver = driver
         self.search_box = (
             By.CSS_SELECTOR,
-            'input.header-search__input'
+            '.header-search > div > form > input'
         )
         self.search_button = (
             By.CSS_SELECTOR,
-            'button.header-search__button'
+            '.header-search > div > form > button > svg'
         )
         self.category_books = (
             By.CSS_SELECTOR,
-            '.search-categories__tree > ul > li:nth-child(1) > div > span'
+            '.filter-search-categories > ul > li:nth-child(1) > button'
         )
         self.books_count = (
             By.CSS_SELECTOR,
-            '.search-categories__tree > ul > li:nth-child'
-            '(2) > div > span > span'
+            '.filter-search-categories > ul > li:nth-child(2) > button > span'
         )
         self.delete_query_cross = (
             By.CSS_SELECTOR,
-            '.header-search-results__row > ul > li > div > button > svg'
+            '.app-search__suggests > div:nth-child(2) '
+            '> ul > li > a > div > button'
         )
         self.clear_icon = (
-            By.CLASS_NAME,
-            'header-search__clear-icon'
+            By.CSS_SELECTOR,
+            '.header__catalog > div > div > div > form > div > button'
         )
         self.suggestions_title = (
-            By.CLASS_NAME,
-            'search-suggestion-wrapper__title'
+            By.CSS_SELECTOR,
+            '.suggests-list__item > span'
         )
         self.book_author = (
             By.CSS_SELECTOR,
-            'article:nth-child(1) .product-title__author'
+            '.product-card__caption > span'
         )
         self.empty_result_message = (
             By.CSS_SELECTOR,
-            'div.catalog-empty-result__container > div > h4'
+            '.catalog-stub__content--row > h4'
         )
         self.search_history_item = (
             By.CSS_SELECTOR,
@@ -71,27 +129,35 @@ class SearchPage:
         )
         self.book_title_locator = (
             By.CSS_SELECTOR,
-            'article:nth-child(1) .product-title__head'
+            '.product-card__caption > a > h3'
         )
         self.success_indicator = (
-            By.CSS_SELECTOR, 'div.search-page.js-catalog-container > p'
+            By.CSS_SELECTOR,
+            '.global-container-vertical.search-page > h1'
         )
+
         logging.info("SearchPage инициализирован.")
 
     def enter_search_query_with_keys(self, query):
         logging.info(f"Ввод запроса '{query}' с использованием send_keys.")
         search_input = wait_for_element(
-            self.driver, self.search_box, EC.element_to_be_clickable
+            self.driver, self.search_box,
+            EC.element_to_be_clickable
         )
         search_input.click()
         search_input.clear()
         search_input.send_keys(query)
         logging.info("Запрос успешно введён.")
 
+        # Обработка всплывающих окон после ввода запроса
+        handle_popups(self.driver)
+        logging.info("Обработка всплывающих окон завершена.")
+
     def enter_search_query_with_js(self, query):
         logging.info(f"Ввод запроса '{query}' с использованием JavaScript.")
         search_input = wait_for_element(
-            self.driver, self.search_box, EC.element_to_be_clickable
+            self.driver, self.search_box,
+            EC.element_to_be_clickable
         )
         search_input.click()
         search_input.clear()
@@ -103,6 +169,10 @@ class SearchPage:
         """
         self.driver.execute_script(js_set_value, search_input, query)
         logging.info("Запрос успешно введён с использованием JavaScript.")
+
+        # Обработка всплывающих окон после ввода запроса
+        handle_popups(self.driver)
+        logging.info("Обработка всплывающих окон завершена.")
 
     def click_element(self, locator):
         logging.info(f"Попытка кликнуть по элементу: {locator}.")
@@ -152,7 +222,7 @@ class SearchPage:
                 EC.element_to_be_clickable
             )
             delete_button.click()
-            WebDriverWait(self.driver, 3).until(EC.staleness_of(delete_button))
+            WebDriverWait(self.driver, 7).until(EC.staleness_of(delete_button))
             logging.info("Запрос успешно удалён из истории.")
         except TimeoutException:
             logging.error("Не удалось удалить запрос из истории.")
@@ -160,10 +230,11 @@ class SearchPage:
     def clear_search_box_with_icon(self):
         logging.info("Очистка строки поиска.")
         try:
-            wait_for_element(
+            cross = wait_for_element(
                 self.driver, self.clear_icon,
                 EC.element_to_be_clickable
-            ).click()
+            )
+            cross.click()
             logging.info("Строка поиска успешно очищена.")
         except TimeoutException:
             logging.error("Кнопка очистки не найдена.")
