@@ -61,6 +61,14 @@ class CartPage:
             By.CSS_SELECTOR,
             ".product-quantity__button.product-quantity__button--right"
         )
+        self.quantity_minus_button = (
+            By.CSS_SELECTOR,
+            ".product-quantity__button.product-quantity__button--left"
+        )
+        self.toast_locator = (
+            By.CSS_SELECTOR,
+            ".cart-page > div.app-toast.app-toast--active > p"
+        )
 
         logging.info("CartPage инициализирован.")
 
@@ -377,4 +385,66 @@ class CartPage:
                 "Неизвестная ошибка при взаимодействии с кнопкой '+': \n"
                 f"{str(e)}"
                 )
+            raise
+
+    def click_decrease_quantity_button(self):
+        """
+        Уменьшает количество товара в корзине, нажимая на кнопку "-".
+        """
+        logging.info(
+            "Попытка нажать на кнопку '-' для уменьшения количества товара."
+            )
+        try:
+            decrease_button = wait_for_element(
+                self.driver, self.quantity_minus_button,
+                EC.element_to_be_clickable
+            )
+            decrease_button.click()
+            logging.info("Кнопка '-' успешно нажата.")
+        except exceptions.TimeoutException:
+            logging.error("Кнопка '-' недоступна.")
+            raise
+        except exceptions.NoSuchElementException:
+            logging.error("Кнопка '-' не найдена на странице.")
+            raise
+
+    def get_max_allowed_quantity(self):
+        """
+        Получает максимально допустимое количество товара из атрибута 'max'.
+        """
+        logging.info("Получение значения 'max' для поля ввода количества.")
+        try:
+            quantity_input = wait_for_element(
+                self.driver, self.quantity_input,
+                EC.presence_of_element_located
+            )
+            max_quantity = int(quantity_input.get_attribute("max"))
+            logging.info(f"Максимально допустимое количество: {max_quantity}")
+            return max_quantity
+        except AttributeError:
+            logging.error("Атрибут 'max' отсутствует у поля ввода количества.")
+            raise
+        except exceptions.TimeoutException:
+            logging.error("Поле ввода количества недоступно.")
+            raise
+
+    def wait_for_quantity_update(self, initial_quantity, timeout=8):
+        """
+        Ожидание, пока количество товара изменится с начального значения.
+        """
+        logging.info(
+            f"Ожидание изменения количества товара с {initial_quantity}."
+            )
+        try:
+            WebDriverWait(self.driver, timeout).until(
+                lambda driver: int(
+                    self.get_item_quantity()) != initial_quantity,
+                "Количество товара не обновилось за указанное время."
+            )
+            logging.info("Количество товара успешно обновилось.")
+        except exceptions.TimeoutException:
+            logging.error("Обновление количества товара не завершилось.")
+            # Логируем текущее значение для диагностики
+            current_quantity = self.get_item_quantity()
+            logging.error(f"Текущее количество: {current_quantity}")
             raise

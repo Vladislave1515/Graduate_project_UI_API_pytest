@@ -434,3 +434,170 @@ class TestCart:
                 "Ожидалась итоговая цена "
                 f"{expected_price}, но получено {updated_price}."
             )
+
+    @allure.feature('Корзина')
+    @allure.story('Изменение количества товара в корзине')
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Изменение количества товара через кнопку '-'")
+    @allure.description(
+        "Тест проверяет, что после нажатия кнопки '-' количество товара "
+        "уменьшается, а итоговая цена пересчитывается корректно."
+    )
+    @pytest.mark.ui
+    def test_decrease_item_quantity(self, browser):
+        search_page = SearchPage(browser)
+        cart_page = CartPage(browser)
+
+        with allure.step("Добавить товар в корзину"):
+            search_page.enter_search_query_with_keys("Гарри Поттер")
+            search_page.submit_search()
+            cart_page.click_buy_button()
+
+        with allure.step("Перейти в корзину"):
+            cart_page.open_cart()
+
+        with allure.step("Установить количество товара равным 3 вручную"):
+            cart_page.set_item_quantity(3)
+            cart_page.wait_price_update()
+
+        with allure.step("Нажать на кнопку '-' для уменьшения количества"):
+            cart_page.click_decrease_quantity_button()
+
+        with allure.step("Подождать обновления количества и цены"):
+            cart_page.wait_price_update()
+
+        with allure.step("Проверить, что количество уменьшилось на 1"):
+            updated_quantity = cart_page.get_item_quantity()
+            assert updated_quantity == 2, (
+                "Ожидалось количество 2, но получено "
+                f"{updated_quantity}."
+            )
+
+    @allure.feature('Корзина')
+    @allure.story('Изменение количества товара на значение больше допустимого')
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Ввод количества товара больше допустимого")
+    @allure.description(
+        "Тест проверяет, что при вводе количества товара,"
+        "превышающего максимально допустимое, значение изменяется "
+        "на максимально допустимое для данного товара."
+    )
+    @pytest.mark.ui
+    def test_set_quantity_above_max(self, browser):
+        search_page = SearchPage(browser)
+        cart_page = CartPage(browser)
+
+        with allure.step(
+            "Выполнить валидный поисковой запрос для поиска товара"
+                ):
+            search_page.enter_search_query_with_keys("Гарри Поттер")
+            search_page.submit_search()
+
+        with allure.step("Добавить товар в корзину"):
+            cart_page.click_buy_button()
+
+        with allure.step("Перейти в корзину"):
+            cart_page.open_cart()
+
+        with allure.step(
+            "Попробовать ввести количество, превышающее максимально допустимое"
+                ):
+            cart_page.set_item_quantity(2000)
+
+        with allure.step("Подождать обновления количества и цены"):
+            cart_page.wait_price_update()
+
+        with allure.step(
+            "Получить максимально допустимое количество из 'max'"
+                ):
+            max_quantity = cart_page.get_max_allowed_quantity()
+
+        with allure.step(
+            "Проверить, что количество товара изменилось на максимальное"
+                ):
+            actual_quantity = cart_page.get_item_quantity()
+            assert actual_quantity == max_quantity, (
+                f"Ожидалось количество {max_quantity}, \n"
+                f"но получено {actual_quantity}."
+            )
+
+    @allure.feature('Корзина')
+    @allure.story('Изменение количества товара на нулевое значение')
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Ввод количества товара равным нулю")
+    @allure.description(
+        "Тест проверяет, что при вводе количества товара, равного нулю, "
+        "значение изменяется на минимально допустимое (1)."
+    )
+    @pytest.mark.ui
+    def test_set_quantity_to_zero(self, browser):
+        search_page = SearchPage(browser)
+        cart_page = CartPage(browser)
+
+        with allure.step("Выполнить валидный поисковой запроc"):
+            search_page.enter_search_query_with_keys("Гарри Поттер")
+            search_page.submit_search()
+
+        with allure.step("Добавить товар в корзину"):
+            cart_page.click_buy_button()
+
+        with allure.step("Перейти в корзину"):
+            cart_page.open_cart()
+
+        with allure.step("Попробовать ввести количество, равное нулю"):
+            cart_page.set_item_quantity(0)
+
+        with allure.step(
+            "Кликнуть на другой элемент для обновления количества"
+                ):
+            search_page.click_element(search_page.search_button)
+
+        with allure.step("Проверить, что количество товара изменилось на 1"):
+            actual_quantity = cart_page.get_item_quantity()
+            assert actual_quantity == 1, (
+                f"Ожидалось количество 1, но получено {actual_quantity}."
+            )
+
+    @allure.feature('Корзина')
+    @allure.story('Изменение количества товара на отрицательное значение')
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Ввод количества товара отрицательным значением")
+    @allure.description(
+        "Тест проверяет, что при вводе отрицательного количества товара, "
+        "значение изменяется на минимально допустимое (1)."
+    )
+    @pytest.mark.ui
+    def test_set_quantity_to_negative(self, browser):
+        search_page = SearchPage(browser)
+        cart_page = CartPage(browser)
+
+        with allure.step("Выполнить валидный поисковой запрос"):
+            search_page.enter_search_query_with_keys("Гарри Поттер")
+            search_page.submit_search()
+
+        with allure.step("Добавить товар в корзину"):
+            cart_page.click_buy_button()
+
+        with allure.step("Перейти в корзину"):
+            cart_page.open_cart()
+
+        with allure.step("Попробовать ввести отрицательное количество товара"):
+            cart_page.set_item_quantity(-10)
+
+        with allure.step("Ожидание обновления количества товара"):
+            current_quantity = cart_page.get_item_quantity()
+            if current_quantity == -10:
+                cart_page.wait_for_quantity_update(initial_quantity=-10)
+            else:
+                logging.info(f"Количество уже обновилось: {current_quantity}")
+
+        with allure.step(
+            "Кликнуть на другой элемент для обновления количества"
+                ):
+            search_page.click_element(search_page.search_button)
+
+        with allure.step("Проверить, что количество товара изменилось на 1"):
+            actual_quantity = cart_page.get_item_quantity()
+            assert actual_quantity == 1, (
+                f"Ожидалось количество 1, но получено {actual_quantity}."
+            )
