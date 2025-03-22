@@ -8,7 +8,7 @@ from pages.Cart_Page_UI import CartPage
 class TestSearch:
     @allure.feature('Поиск')
     @allure.story('Валидный запрос')
-    @allure.severity(allure.severity_level.NORMAL)
+    @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("Поиск с валидным запросом")
     @allure.description(
         "Тестирование функции поиска с использованием валидного запроса "
@@ -61,7 +61,7 @@ class TestSearch:
 
     @allure.feature('Поиск')
     @allure.story('Поиск по автору')
-    @allure.severity(allure.severity_level.NORMAL)
+    @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("Поиск книг по автору")
     @allure.description(
         "Тестирование функции поиска книг по автору "
@@ -85,7 +85,7 @@ class TestSearch:
 
     @allure.feature('Поиск')
     @allure.story('Неправильная раскладка клавиатуры')
-    @allure.severity(allure.severity_level.NORMAL)
+    @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("Поиск с неправильной раскладкой")
     @allure.description(
         "Тестирование обработки запроса, введенного с неправильной раскладкой "
@@ -109,8 +109,8 @@ class TestSearch:
             )
 
     @allure.feature('Поиск')
-    @allure.story('Негативный тест: Валидное название товара со спецсимволами')
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.story('Негативный тест: Валидное название товара с спецсимволами')
+    @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Поиск с валидным названием и специальными символами")
     @allure.description(
         "Тестирование обработки системы при поиске запроса"
@@ -137,7 +137,7 @@ class TestSearch:
             )
 
     @allure.feature('Поиск')
-    @allure.story('Поиск с использованием только эмодзи')
+    @allure.story('Негативный тест: Поиск с использованием только эмодзи')
     @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Поиск только с использованием эмодзи")
     @allure.description(
@@ -164,7 +164,7 @@ class TestSearch:
             )
 
     @allure.feature('Поиск')
-    @allure.story('Ввод более 150 символов')
+    @allure.story('Негативный тест: Ввод более 150 символов')
     @allure.severity(allure.severity_level.NORMAL)
     @allure.title(
         "Проверка ограничения на длину ввода в строке поиска после отправки")
@@ -196,8 +196,8 @@ class TestSearch:
             )
 
     @allure.feature('Поиск')
-    @allure.story('Пустой запрос')
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.story('Негативный тест: Пустой запрос')
+    @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Поиск с пустым запросом")
     @allure.description(
         "Тестирование поведения системы при поиске с пустым запросом. "
@@ -222,7 +222,7 @@ class TestSearch:
             assert not search_success, "Поиск выполнен, хотя запрос был пуст!"
 
     @allure.feature('Поиск')
-    @allure.story('Невалидный запрос')
+    @allure.story('Негативный тест: Невалидный запрос')
     @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Поиск с невалидным запросом")
     @allure.description(
@@ -474,8 +474,11 @@ class TestCart:
             )
 
     @allure.feature('Корзина')
-    @allure.story('Изменение количества товара на значение больше допустимого')
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.story(
+        'Негативный тест: Изменение количества товара '
+        'на значение больше допустимого'
+        )
+    @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Ввод количества товара больше допустимого")
     @allure.description(
         "Тест проверяет, что при вводе количества товара,"
@@ -522,8 +525,10 @@ class TestCart:
             )
 
     @allure.feature('Корзина')
-    @allure.story('Изменение количества товара на нулевое значение')
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.story(
+        'Негативный тест: Изменение количества товара на нулевое значение'
+        )
+    @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Ввод количества товара равным нулю")
     @allure.description(
         "Тест проверяет, что при вводе количества товара, равного нулю, "
@@ -559,8 +564,11 @@ class TestCart:
             )
 
     @allure.feature('Корзина')
-    @allure.story('Изменение количества товара на отрицательное значение')
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.story(
+        'Негативный тест: Изменение количества товара '
+        'на отрицательное значение'
+        )
+    @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Ввод количества товара отрицательным значением")
     @allure.description(
         "Тест проверяет, что при вводе отрицательного количества товара, "

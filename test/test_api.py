@@ -9,15 +9,15 @@ BASE_URL_V1 = "https://web-gate.chitai-gorod.ru/api/v1/"  # Для корзин�
 BASE_URL_V2 = "https://web-gate.chitai-gorod.ru/api/v2/"  # Для поиска
 
 HEADERS = {
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
-    ".eyJleHAiOjE3NDI2MjAyNDUsImlhdCI6MTc0MjQ1MjI0NSwiaXNzIjoiL2F"
-    "waS92MS9hdXRoL2Fub255bW91cyIsInN1YiI6IjYyNzVmOTJlYWY4YWUwY2U"
-    "xYzNhNTRmOGJiZjllNmFhNDdkNGUxMjlhOWVkZTRlMjEyMmFjYWViMzFlZGN"
-    "jZWIiLCJ0eXBlIjoxMH0.di7ylDel5uWjV7NzWPP-D2IahXxaXhD6mtyzv8E"
-    "0eK4"
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ"
+    "9.eyJleHAiOjE3NDI3OTM1NzEsImlhdCI6MTc0MjYyNTU3MSwiaXNzIjoi"
+    "L2FwaS92MS9hdXRoL2Fub255bW91cyIsInN1YiI6IjIzZjFlZTUwYzM2Z"
+    "WVhNmNkYjE5Njg5NTJiODA1YzA3NDlhNzMxNjExZjkwODEwYzBhZThh"
+    "MDRiNTgyMzNmMWYiLCJ0eXBlIjoxMH0.sa6xGJpsre0ZsfSvod74s"
+    "YQXAqjjhOQm4EhvtiD8pG4"
     }  # Временный токен
 PRODUCT_ID = 3067555  # ID_prod
-ID_prod_put_del_post = 194843212
+ID_prod_put_del_post = 195147409
 SEARCH_NAME = (
     "search/product?customerCityId=2&phrase=%D0%93%D0%B0%D1%80%D1%80%D0%B8%20"
     "%D0%9F%D0%BE%D1%82%D1%82%D0%B5%D1%80%20%D0%B8%20%D0%BA%D1%83%D0%B1%D0%BE"
@@ -56,7 +56,7 @@ class TestCart:
     @allure.feature('Корзина')
     @allure.story('Добавление товара в корзину')
     @allure.severity(allure.severity_level.CRITICAL)
-    @allure.title("Позитивный тест: добавление товара в корзину")
+    @allure.title("Добавление товара в корзину")
     @allure.description(
         "Тест проверяет, что POST запрос на добавление "
         "товара в корзину выполняется успешно."
@@ -208,11 +208,11 @@ class TestCart:
             "восстановлен в корзину."
 
     @allure.feature('Корзина')
-    @allure.story('Увеличение количества товара выше допустимого')
-    @allure.severity(allure.severity_level.CRITICAL)
-    @allure.title(
-        "Негативный тест: Увеличение количества товара выше допустимого"
+    @allure.story(
+        'Негативный тест: Увеличение количества товара выше допустимого'
         )
+    @allure.severity(allure.severity_level.NORMAL)
+    @allure.title("Увеличение количества товара выше допустимого")
     @allure.description(
         "Тест проверяет, что система не позволяет увеличить количество товара "
         "выше допустимого значения и возвращает статус код 422."
@@ -248,12 +248,12 @@ class TestCart:
                 )
 
     @allure.feature('Корзина')
-    @allure.story('Изменение количества товара на отрицательное значение')
-    @allure.severity(allure.severity_level.CRITICAL)
-    @allure.title(
-        "Негативный тест: Изменение количества "
-        "товара на отрицательное значение"
+    @allure.story(
+        'Негативный тест: Изменение количества товара '
+        'на отрицательное значение'
         )
+    @allure.severity(allure.severity_level.NORMAL)
+    @allure.title("Изменение количества товара на отрицательное значение")
     @allure.description(
         "Тест проверяет, что система не позволяет установить отрицательное "
         "количество товара в корзине и возвращает статус код 422."
@@ -290,9 +290,9 @@ class TestCart:
                 )
 
     @allure.feature('Корзина')
-    @allure.story('Запрос без тела')
-    @allure.severity(allure.severity_level.CRITICAL)
-    @allure.title("Негативный тест: Запрос без тела")
+    @allure.story('Негативный тест: Запрос без тела')
+    @allure.severity(allure.severity_level.NORMAL)
+    @allure.title("Запрос без тела")
     @allure.description(
         "Тест проверяет, что API не позволяет выполнить POST запрос без тела "
         "и возвращает статус код 404 с сообщением об ошибке."
@@ -536,8 +536,8 @@ class TestSearch:
             )
 
     @allure.feature('Поиск')
-    @allure.story('Поиск с длиной строки больше 150 символов')
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.story('Негативный тест: Поиск с длиной строки больше 150 символов')
+    @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Тест поиска с длиной строки больше 150 символов")
     @allure.description(
         "Тест проверяет, что система не принимает "
