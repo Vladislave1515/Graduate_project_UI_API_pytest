@@ -3,6 +3,9 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from config import BASE_URL, IMPLICIT_WAIT
+from pages.Cart_Page_API import CartPageAPI
+from pages.Search_Page_API import SearchPageAPI
+from config import BASE_URLS, HEADERS
 
 
 def pytest_addoption(parser):
@@ -40,3 +43,30 @@ def browser(request):
     yield driver
 
     driver.quit()
+
+
+@pytest.fixture(scope="function")
+def cart_api():
+    """
+    Фикстура для API клиента корзины.
+    Возвращает объект CartPageAPI.
+    """
+    return CartPageAPI(BASE_URLS["cart"], HEADERS)
+
+
+@pytest.fixture(scope="function")
+def search_api():
+    """
+    Фикстура для API клиента поиска.
+    Возвращает объект SearchPageAPI.
+    """
+    return SearchPageAPI(BASE_URLS["search"], HEADERS)
+
+
+@pytest.fixture(scope="function")
+def search_api_no_auth():
+    """
+    Фикстура для API клиента корзины без авторизации.
+    """
+    headers_without_auth = {}  # Пустые заголовки
+    return SearchPageAPI(BASE_URLS["search"], headers_without_auth)

@@ -1,55 +1,19 @@
 import pytest
 import allure
 import logging
-from pages.Cart_Page_API import CartPageAPI
-from pages.Search_Page_API import SearchPageAPI
+from config import BASE_URLS, HEADERS, PRODUCT_IDS, SEARCH_QUERIES
 
 
-BASE_URL_V1 = "https://web-gate.chitai-gorod.ru/api/v1/"  # Для корзины
-BASE_URL_V2 = "https://web-gate.chitai-gorod.ru/api/v2/"  # Для поиска
-
-HEADERS = {
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ"
-    "9.eyJleHAiOjE3NDI3OTM1NzEsImlhdCI6MTc0MjYyNTU3MSwiaXNzIjoi"
-    "L2FwaS92MS9hdXRoL2Fub255bW91cyIsInN1YiI6IjIzZjFlZTUwYzM2Z"
-    "WVhNmNkYjE5Njg5NTJiODA1YzA3NDlhNzMxNjExZjkwODEwYzBhZThh"
-    "MDRiNTgyMzNmMWYiLCJ0eXBlIjoxMH0.sa6xGJpsre0ZsfSvod74s"
-    "YQXAqjjhOQm4EhvtiD8pG4"
-    }  # Временный токен
-PRODUCT_ID = 3067555  # ID_prod
-ID_prod_put_del_post = 195147409
-SEARCH_NAME = (
-    "search/product?customerCityId=2&phrase=%D0%93%D0%B0%D1%80%D1%80%D0%B8%20"
-    "%D0%9F%D0%BE%D1%82%D1%82%D0%B5%D1%80%20%D0%B8%20%D0%BA%D1%83%D0%B1%D0%BE"
-    "%D0%BA%20%D0%BE%D0%B3%D0%BD%D1%8F&products%5Bpage%5D=1&products%5Bper-"
-    "page%5D=48&sortPreset=relevance"
-)
-SEARCH_CATEGORY = (
-    "search/product?filters%5Bcategories%5D=110090&customerCityId=2&phrase="
-    "%D0%B3%D0%B0%D1%80%D1%80%D0%B8%20%D0%BF%D0%BE%D1%82%D1%82%D0%B5%D1%80%20"
-    "%D0%B8%20%D0%BA%D1%83%D0%B1%D0%BE%D0%BA%20%D0%BE%D0%B3%D0%BD%D1%8F&"
-    "products%5Bpage%5D=1&products%5Bper-page%5D=48&sortPreset=relevance"
-)
-SEARCH_AVTOR = (
-    "search/product?filters%5Bauthors%5D=604355&customerCityId=2&phrase="
-    "%D1%80%D0%BE%D1%83%D0%BB%D0%B8%D0%BD%D0%B3%20%D0%B4%D0%B6%D0%BE%D0%B0%D0"
-    "%BD%20%D0%BA%D1%8D%D1%82%D0%BB%D0%B8%D0%BD&products%5Bpage%5D=1&products"
-    "%5Bper-page%5D=48&sortPreset=relevance"
-)
-REPEATED_PART = (
-    "%D0%B3%D0%B0%D1%80%D1%80%D0%B8%20%D0%BF%D0%BE%D1%82%D1%82%D0%B5%D1%80%20"
-    )
-
-SEARCH_150_SYMBOL = (
-    "search/product?customerCityId=2&phrase="
-    + (REPEATED_PART * 9)  # Повторяем 9 раз
-    + "%D0%B8%20%D0%BA%D1%83%D0%B1%D0%BE%D0%BA"  # Добавляем конец строки
-)
-SEARCH_MORE150_SYMBOL = (
-    "search/product?customerCityId=2&phrase="
-    + (REPEATED_PART * 10)
-    + "%D0%B8%20%D0%BA%D1%83%D0%B1%D0%BE%D0%BA"
-)
+BASE_URL_V1 = BASE_URLS["cart"]
+BASE_URL_V2 = BASE_URLS["search"]
+HEADERS = HEADERS
+PRODUCT_ID = PRODUCT_IDS["default_product"]
+ID_prod_put_del_post = PRODUCT_IDS["cart_product"]
+SEARCH_NAME = SEARCH_QUERIES["name"]
+SEARCH_CATEGORY = SEARCH_QUERIES["category"]
+SEARCH_AVTOR = SEARCH_QUERIES["author"]
+SEARCH_MORE150_SYMBOL = SEARCH_QUERIES["query_more_150"]
+SEARCH_150_SYMBOL = SEARCH_QUERIES["query_150"]
 
 
 class TestCart:
@@ -62,11 +26,10 @@ class TestCart:
         "товара в корзину выполняется успешно."
     )
     @pytest.mark.api
-    def test_add_product_to_cart(self):
-        api = CartPageAPI(BASE_URL_V1, HEADERS)
+    def test_add_product_to_cart(self, cart_api):
 
         with allure.step("Отправить POST запрос для добавления товара"):
-            response = api.add_product_to_cart(PRODUCT_ID)
+            response = cart_api.add_product_to_cart(PRODUCT_ID)
 
         with allure.step("Проверить, что статус ответа равен 200"):
             assert response["status"] == 200, (
@@ -88,11 +51,10 @@ class TestCart:
         "выполняется успешно и возвращает корректные данные."
     )
     @pytest.mark.api
-    def test_view_cart_contents(self):
-        api = CartPageAPI(BASE_URL_V1, HEADERS)
+    def test_view_cart_contents(self, cart_api):
 
         with allure.step("Отправить GET запрос для получения списка товаров"):
-            response_body = api.get_cart_contents()
+            response_body = cart_api.get_cart_contents()
 
         with allure.step("Проверить, что тело ответа содержит список товаров"):
             assert response_body is not None, "Ответ сервера пустой."
@@ -111,13 +73,14 @@ class TestCart:
         "выполняется успешно и данные корзины обновляются."
     )
     @pytest.mark.api
-    def test_update_product_quantity(self):
-        api = CartPageAPI(BASE_URL_V1, HEADERS)
+    def test_update_product_quantity(self, cart_api):
 
         with allure.step(
             "Отправить PUT запрос для увеличения количества товара"
                 ):
-            response = api.update_product_quantity(ID_prod_put_del_post, 2)
+            response = cart_api.update_product_quantity(
+                ID_prod_put_del_post, 2
+                )
 
         with allure.step("Проверить, что количество товара обновлено"):
             try:
@@ -156,11 +119,10 @@ class TestCart:
         "Тест проверяет, что DELETE запрос успешно удаляет товар из корзины."
     )
     @pytest.mark.api
-    def test_delete_product_from_cart(self):
-        api = CartPageAPI(BASE_URL_V1, HEADERS)
+    def test_delete_product_from_cart(self, cart_api):
 
         with allure.step("Отправить DELETE запрос для удаления товара"):
-            response = api.delete_product_from_cart(ID_prod_put_del_post)
+            response = cart_api.delete_product_from_cart(ID_prod_put_del_post)
 
         with allure.step("Проверить, что статус ответа равен 204"):
             # Проверяем статус ответа напрямую у объекта Response
@@ -170,7 +132,7 @@ class TestCart:
 
         # Дополнительно проверим, что товар больше не в корзине
         with allure.step("Проверить, что товар был удалён из корзины"):
-            get_response = api.get_cart_contents()
+            get_response = cart_api.get_cart_contents()
             assert "products" in get_response, "'products' отсутствует."
             products = get_response["products"]
             assert all(
@@ -187,11 +149,10 @@ class TestCart:
         "возвращает удалённый товар в корзину."
     )
     @pytest.mark.api
-    def test_restore_product_to_cart(self):
-        api = CartPageAPI(BASE_URL_V1, HEADERS)
+    def test_restore_product_to_cart(self, cart_api):
 
         with allure.step("Отправить POST запрос для восстановления товара"):
-            response = api.restore_product_to_cart(ID_prod_put_del_post)
+            response = cart_api.restore_product_to_cart(ID_prod_put_del_post)
 
         with allure.step("Проверить, что статус ответа равен 200"):
             assert response.status_code == 200, (
@@ -218,13 +179,14 @@ class TestCart:
         "выше допустимого значения и возвращает статус код 422."
     )
     @pytest.mark.api
-    def test_increase_product_quantity_above_limit(self):
-        api = CartPageAPI(BASE_URL_V1, HEADERS)
+    def test_increase_product_quantity_above_limit(self, cart_api):
 
         with allure.step(
             "Отправить PUT запрос для увеличения количества товара"
                 ):
-            response = api.update_product_quantity(ID_prod_put_del_post, 2000)
+            response = cart_api.update_product_quantity(
+                ID_prod_put_del_post, 2000
+                )
 
         with allure.step("Проверить, что статус ответа равен 422"):
             assert response.status_code == 422, (
@@ -259,14 +221,15 @@ class TestCart:
         "количество товара в корзине и возвращает статус код 422."
     )
     @pytest.mark.api
-    def test_set_negative_quantity_in_cart(self):
-        api = CartPageAPI(BASE_URL_V1, HEADERS)
+    def test_set_negative_quantity_in_cart(self, cart_api):
 
         with allure.step(
             "Отправить PUT запрос для установки "
             "отрицательного количества товара"
                 ):
-            response = api.update_product_quantity(ID_prod_put_del_post, -1)
+            response = cart_api.update_product_quantity(
+                ID_prod_put_del_post, -1
+                )
 
         with allure.step("Проверить, что статус ответа равен 422"):
             assert response.status_code == 422, (
@@ -298,11 +261,12 @@ class TestCart:
         "и возвращает статус код 404 с сообщением об ошибке."
     )
     @pytest.mark.api
-    def test_post_request_without_body(self):
-        api = CartPageAPI(BASE_URL_V1, HEADERS)
+    def test_post_request_without_body(self, cart_api):
 
         with allure.step("Отправить POST запрос без тела"):
-            response = api.post_request_without_body("cart/product-restore")
+            response = cart_api.post_request_without_body(
+                "cart/product-restore"
+                )
 
         with allure.step("Проверить, что статус ответа равен 404"):
             assert response.status_code == 404, (
@@ -328,66 +292,32 @@ class TestCart:
 
 class TestSearch:
     @allure.feature('Поиск')
-    @allure.story('Валидный поиск товара по названию')
-    @allure.severity(allure.severity_level.CRITICAL)
-    @allure.title("Тест валидного поиска товара")
+    @pytest.mark.parametrize(
+        "query_type, search_query, expected_phrase, expected_product_id",
+        [
+            ("Название", SEARCH_QUERIES["name"],
+             "гарри поттер и кубок огня", "2441276"),
+            ("Категория", SEARCH_QUERIES["category"],
+             "гарри поттер и кубок огня", "2441276"),
+            ("Автор", SEARCH_QUERIES["author"],
+             "роулинг джоан кэтлин", "2405917"),
+        ]
+    )
+    @allure.title("Тест валидного поиска товара по {query_type}")
     @allure.description(
         "Тест проверяет, что API возвращает валидный и релевантный результат "
-        "при поиске товара по названию."
+        "при выполнении различных запросов поиска."
     )
     @pytest.mark.api
-    def test_valid_product_search_by_name(self):
-        api = SearchPageAPI(BASE_URL_V2, HEADERS)
-
-        with allure.step("Отправить GET запрос для поиска товара"):
-            response = api.search_by_name(SEARCH_NAME)
-
-        with allure.step("Проверить, что статус ответа равен 200"):
-            assert response.status_code == 200, (
-                f"Ожидался статус 200, но получен {response.status_code}."
-            )
-
-        with allure.step("Проверить, что ответ содержит валидные данные"):
-            try:
-                response_body = response.json()
-                assert "data" in response_body, "'data' отсутствует."
-                assert "attributes" in response_body["data"], (
-                    "Ключ 'attributes' отсутствует в разделе 'data'."
-                )
-                assert response_body[
-                    "data"]["attributes"]["transformedPhrase"] == (
-                        "гарри поттер и кубок огня"
-                        ), "Фраза поиска не совпадает с ожидаемой."
-                assert "relationships" in response_body["data"], (
-                    "Ключ 'relationships' отсутствует в разделе 'data'."
-                )
-                products = response_body[
-                    "data"]["relationships"]["products"]["data"]
-                assert any(
-                    product["id"] == "2441276" for product in products
-                ), "Искомый продукт не найден в результатах поиска."
-            except ValueError as e:
-                assert False, (
-                    f"Ошибка обработки JSON из ответа сервера: {e}. "
-                    f"Тело ответа: {response.text}"
-                )
-
-    @allure.feature('Поиск')
-    @allure.story('Валидный поиск товара по категории')
-    @allure.severity(allure.severity_level.CRITICAL)
-    @allure.title("Тест валидного поиска по категории")
-    @allure.description(
-        "Тест проверяет, что API возвращает валидный и релевантный результат "
-        "при поиске товара по категории."
-    )
-    @pytest.mark.api
-    def test_valid_product_search_by_category(self):
-        api = SearchPageAPI(BASE_URL_V2, HEADERS)  # Используем URL_v2
+    def test_valid_search_api(
+        self, query_type, search_query,
+        expected_phrase, expected_product_id, search_api
+            ):
 
         with allure.step(
-            "Отправить GET-запрос для поиска товара по категории"
+            f"Отправить GET-запрос для поиска товара ({query_type})"
                 ):
-            response = api.search_by_category(SEARCH_CATEGORY)
+            response = search_api.search_with_query(search_query)
 
         with allure.step("Проверить, что статус ответа равен 200"):
             assert response.status_code == 200, (
@@ -402,62 +332,20 @@ class TestSearch:
                     "Ключ 'attributes' отсутствует в разделе 'data'."
                 )
                 assert response_body[
-                    "data"]["attributes"]["transformedPhrase"] == (
-                    "гарри поттер и кубок огня"
-                ), "Фраза поиска не совпадает с ожидаемой."
+                    "data"]["attributes"][
+                        "transformedPhrase"] == expected_phrase, (
+                            "Фраза поиска не совпадает с ожидаемой: "
+                            f"{expected_phrase}."
+                            )
                 assert "relationships" in response_body["data"], (
                     "Ключ 'relationships' отсутствует в разделе 'data'."
                 )
                 products = response_body[
                     "data"]["relationships"]["products"]["data"]
                 assert any(
-                    product["id"] == "2441276" for product in products
-                ), "Искомый продукт не найден в результатах поиска."
-            except ValueError as e:
-                assert False, (
-                    f"Ошибка обработки JSON из ответа сервера: {e}. "
-                    f"Тело ответа: {response.text}"
-                )
-
-    @allure.feature('Поиск')
-    @allure.story('Валидный поиск товара по автору книги')
-    @allure.severity(allure.severity_level.CRITICAL)
-    @allure.title("Тест валидного поиска по автору")
-    @allure.description(
-        "Тест проверяет, что API возвращает валидный и релевантный результат "
-        "при поиске товара по автору книги."
-    )
-    @pytest.mark.api
-    def test_api_search_by_author(self):
-        api = SearchPageAPI(BASE_URL_V2, HEADERS)  # Используем URL_v2
-
-        with allure.step("Отправить GET-запрос для поиска товара по автору"):
-            response = api.search_by_author(SEARCH_AVTOR)
-
-        with allure.step("Проверить, что статус ответа равен 200"):
-            assert response.status_code == 200, (
-                f"Ожидался статус 200, но получен {response.status_code}."
-            )
-
-        with allure.step("Проверить, что ответ содержит валидные данные"):
-            try:
-                response_body = response.json()
-                assert "data" in response_body, "'data' отсутствует."
-                assert "attributes" in response_body["data"], (
-                    "Ключ 'attributes' отсутствует в разделе 'data'."
-                )
-                assert response_body[
-                    "data"]["attributes"]["transformedPhrase"] == (
-                        "роулинг джоан кэтлин"
-                        ), "Фраза поиска не совпадает с ожидаемой."
-                assert "relationships" in response_body["data"], (
-                    "Ключ 'relationships' отсутствует в разделе 'data'."
-                )
-                products = response_body[
-                    "data"]["relationships"]["products"]["data"]
-                assert any(
-                    product["id"] == "2405917" for product in products
-                ), "Искомый продукт не найден в результатах поиска."
+                    product[
+                        "id"] == expected_product_id for product in products
+                ), f"Искомый продукт с ID {expected_product_id} не найден."
             except ValueError as e:
                 assert False, (
                     f"Ошибка обработки JSON из ответа сервера: {e}. "
@@ -473,13 +361,12 @@ class TestSearch:
         "запрос длиной 150 символов и возвращает валидные результаты."
     )
     @pytest.mark.api
-    def test_search_by_150_symbols(self):
-        api = SearchPageAPI(BASE_URL_V2, HEADERS)  # Используем URL_v2
+    def test_search_by_150_symbols(self, search_api):
 
         with allure.step(
             "Отправить GET-запрос для поиска товара по длинной строке"
                 ):
-            response = api.search_by_150_symbols(SEARCH_150_SYMBOL)
+            response = search_api.search_by_150_symbols(SEARCH_150_SYMBOL)
 
         with allure.step("Проверить, что статус ответа равен 200"):
             assert response.status_code == 200, (
@@ -522,13 +409,12 @@ class TestSearch:
         "возвращает корректный статус 204."
     )
     @pytest.mark.api
-    def test_search_results_output(self):
-        api = SearchPageAPI(BASE_URL_V2, HEADERS)  # Используем URL_v2
+    def test_search_results_output(self, search_api):
 
         with allure.step(
             "Отправить POST-запрос для вывода результатов поиска"
                 ):
-            response = api.post_search_results("гарри поттер", 21)
+            response = search_api.post_search_results("гарри поттер", 21)
 
         with allure.step("Проверить, что статус ответа равен 204"):
             assert response.status_code == 204, (
@@ -545,13 +431,12 @@ class TestSearch:
         "соответствующую ошибку 422."
     )
     @pytest.mark.api
-    def test_search_long_query(self):
-        api = SearchPageAPI(BASE_URL_V2, HEADERS)  # Используем URL_v2
+    def test_search_long_query(self, search_api):
 
         with allure.step(
             "Отправить GET-запрос для поиска с длиной строки > 150 символов"
                 ):
-            response = api.search_with_long_query(SEARCH_MORE150_SYMBOL)
+            response = search_api.search_with_long_query(SEARCH_MORE150_SYMBOL)
 
         with allure.step("Проверить, что статус ответа равен 422"):
             assert response.status_code == 422, (
@@ -573,3 +458,39 @@ class TestSearch:
                     f"Ошибка обработки JSON из ответа сервера: {e}. "
                     f"Тело ответа: {response.text}"
                 )
+
+    @allure.feature('Поиск')
+    @allure.story('Негативный тест: Вывод результатов поиска без авторизации')
+    @allure.severity(allure.severity_level.NORMAL)
+    @allure.title("Тест вывода результатов поиска без авторизации")
+    @allure.description(
+        "Тест проверяет, что POST запрос для вывода результатов поиска "
+        "без токена авторизации возвращает корректный статус 401 Unauthorized."
+    )
+    @pytest.mark.api
+    def test_search_without_authorization(self, search_api_no_auth):
+
+        with allure.step(
+            "Отправить POST-запрос для вывода результатов поиска"
+                ):
+            response = search_api_no_auth.post_search_results(
+                "гарри поттер", 21
+                )
+
+        with allure.step(
+            "Проверить, что статус ответа равен 401 Unauthorized"
+                ):
+            assert response.status_code == 401, (
+                "Ожидался статус 401 Unauthorized, но получен "
+                f"{response.status_code}."
+            )
+
+        with allure.step("Проверить, что ответ содержит сообщение об ошибке"):
+            response_body = response.json()
+            assert "message" in response_body, "'message' отсутствует "
+            "в ответе сервера."
+            assert response_body[
+                "message"] == "Authorization обязательное поле", (
+                "Ожидалось сообщение 'Authorization поле', но получено: "
+                f"{response_body.get('message')}."
+            )

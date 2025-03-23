@@ -7,37 +7,11 @@ class SearchPageAPI:
         self.base_url = base_url
         self.headers = headers
 
-    def search_by_name(self, search_name):
+    def search_with_query(self, query):
         """
-        Выполняет GET запрос для поиска товара по названию.
+        Выполняет GET-запрос для любого типа поиска.
         """
-        url = f"{self.base_url}{search_name}"
-        logging.info(f"Отправка GET-запроса на {url}")
-        response = requests.get(url, headers=self.headers)
-        logging.info(
-            "Ответ сервера: статус "
-            f"{response.status_code}, тело {response.text}"
-        )
-        return response
-
-    def search_by_category(self, category_query):
-        """
-        Выполняет GET-запрос для поиска товаров по категории.
-        """
-        url = f"{self.base_url}{category_query}"
-        logging.info(f"Отправка GET-запроса на {url}")
-        response = requests.get(url, headers=self.headers)
-        logging.info(
-            "Ответ сервера: статус "
-            f"{response.status_code}, тело {response.text}"
-        )
-        return response
-
-    def search_by_author(self, author_query):
-        """
-        Выполняет GET-запрос для поиска товаров по автору.
-        """
-        url = f"{self.base_url}{author_query}"
+        url = f"{self.base_url}{query}"
         logging.info(f"Отправка GET-запроса на {url}")
         response = requests.get(url, headers=self.headers)
         logging.info(
