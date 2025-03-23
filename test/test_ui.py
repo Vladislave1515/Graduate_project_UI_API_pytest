@@ -272,6 +272,9 @@ class TestCart:
                          "товара в корзину"):
             cart_page.click_buy_button()
 
+        with allure.step("Перейти в корзину"):
+            cart_page.open_cart()
+
         with allure.step("Проверить, что товар добавлен в корзину"):
             cart_count = cart_page.get_cart_item_count()
             assert cart_count > 0, "Товар не был добавлен в корзину!"

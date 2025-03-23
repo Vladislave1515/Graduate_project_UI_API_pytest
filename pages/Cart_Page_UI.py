@@ -26,12 +26,13 @@ class CartPage:
         )
         self.cart_item_count = (
             By.CSS_SELECTOR,
-            ".sticky-header__controls > span > span."
-            "badge-notice.header-cart__badge"
+            ".header__controls > button:nth-child(4) > span."
+            "header-controls__icon-wrapper > div"
         )
         self.cart_icon = (
             By.CSS_SELECTOR,
-            ".header-controls.header__controls > button:nth-child(4)"
+            ".sticky-header__controls > span > span.badge-notice"
+            ".header-cart__badge"
         )
         self.remove_button = (
             By.CSS_SELECTOR,
@@ -119,7 +120,7 @@ class CartPage:
         """
         logging.info("Попытка открыть корзину.")
         wait_for_element(
-            self.driver, self.cart_icon,
+            self.driver, self.cart_item_count,
             EC.element_to_be_clickable
         ).click()
         logging.info("Корзина успешно открыта.")
@@ -164,7 +165,7 @@ class CartPage:
         logging.info("Получение количества товаров в корзине.")
         try:
             cart_count = wait_for_element(
-                self.driver, self.cart_item_count,
+                self.driver, self.cart_icon,
                 EC.presence_of_element_located
             )
             count = int(cart_count.text.strip())
@@ -350,7 +351,7 @@ class CartPage:
         try:
             WebDriverWait(self.driver, 7).until(
                 lambda driver: driver.find_element(
-                    *self.cart_item_count).is_displayed(),
+                    *self.cart_icon).is_displayed(),
                 "Корзина не загрузилась в течение заданного времени."
             )
             logging.info("Корзина успешно загружена.")
