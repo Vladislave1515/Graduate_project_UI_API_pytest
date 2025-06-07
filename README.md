@@ -66,6 +66,6 @@ pip3 install -r requirements.txt
 
         (Запустятся UI тест кейсы).
 
-## Благодарю за использование!
+## Благодарю за просмотр, использование!
 
 Если у вас есть вопросы или предложения, не стесняйтесь открыть [issue](https://github.com/Vladislave1515/Graduate_project_UI_API_pytest/issues) в репозитории.
