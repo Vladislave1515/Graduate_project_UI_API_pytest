@@ -40,6 +40,8 @@ pip3 install -r requirements.txt
 ```
 
 4. **ВАЖНО** : обновление токена нужно произвести до запуска тестов!
+<img width="1401" height="467" alt="image" src="https://github.com/user-attachments/assets/9e8250fd-eeab-4f44-99c2-6a13cbe7a76a" />
+
 
 5. Запустить тесты (различные методы):
     1. Через скрипт run.ps1 в строке PowerShell ввести
